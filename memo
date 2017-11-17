@@ -1,0 +1,44 @@
+switch (this.item.type) {
+  case 'checkbox':
+  case 'radio':
+    return this.item.el.checked;
+  case 'textarea':
+  case 'hidden':
+  case 'text':
+  case 'search':
+  case 'tel':
+  case 'url':
+  case 'email':
+  case 'password':
+  case 'datetime':
+  case 'date':
+  case 'month':
+  case 'week':
+  case 'time':
+  case 'datetime-local':
+  case 'number':
+  case 'range':
+  case 'color':
+  case 'checkbox':
+  case 'radio':
+  case 'file':
+  case 'submit':
+  case 'image':
+  case 'reset':
+  case 'button':
+    return this.item.el.value.trim() === '';
+}
+
+ValidityState:
+badInput
+customError
+patternMismatch
+rangeOverflow
+rangeUnderflow
+stepMismatch
+tooLong
+tooShort
+typeMismatch
+valid
+valueMissing
+

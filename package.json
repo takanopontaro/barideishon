@@ -1,0 +1,24 @@
+{
+  "name": "barideishon",
+  "version": "1.0.0",
+  "author": "takanopontaro",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "del-cli": "^1.1.0",
+    "fixpack": "^2.3.1",
+    "tslint": "^5.7.0",
+    "typescript": "^2.4.2"
+  },
+  "files": [
+    "lib"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "repository": "https://github.com/takanopontaro/barideishon",
+  "scripts": {
+    "start": "fixpack && del-cli lib && tsc -w",
+    "test": "tsc -p test && node test/test.spec.js"
+  },
+  "types": "lib/index.d.ts"
+}
