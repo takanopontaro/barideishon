@@ -1,4 +1,5 @@
-export { Barideishon } from './main';
+export { Valli } from './main';
+
 export {
   FormControl,
   NativeValidatorOptions,

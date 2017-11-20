@@ -1,6 +1,7 @@
 Barideishon.init('form.j-validation');
 
 // pattern="^\\d{4}/\\d{2}/\\d{2}$" data-validation="type:date,err:#range,range:#date1,attribute:開始日,date:終了日"
+// pattern="^\\d{4}/\\d{2}/\\d{2}$" data-validation="{native:{type:false},rule:{equal:{partner:'#newpw2',shadow:true}},type:date,err:#range,range:#date1,attribute:開始日,date:終了日}"
 
 new Item('.g-input');
 new Item('.g-input', { native: false });

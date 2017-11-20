@@ -1,3 +1,7 @@
+export type ExpForm = string | HTMLFormElement;
+export type ExpControl = string | FormControl;
+export type ExpControls = string | FormControl[];
+
 export type FormControl =
   | HTMLSelectElement
   | HTMLInputElement
@@ -27,4 +31,6 @@ export interface ValidityResult {
 
 export interface ItemOptions {
   native?: boolean | Partial<NativeValidatorOptions>;
+  rule?: any;
+  [key: string]: any;
 }

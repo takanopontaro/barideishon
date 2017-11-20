@@ -1,24 +1,36 @@
-import { FormControl } from '../types';
-import { Exp, Rule } from '../rule';
+import { ExpControl, FormControl } from '../types';
+import { Rule } from '../rule';
+import { Item } from '../item';
 
-class Within extends Rule {
+export interface Options {
+  partner: ExpControl;
+  begin: boolean;
+  equal: boolean;
+}
+
+export class Within extends Rule {
   name = 'within';
 
   private partner: FormControl;
   private begin: FormControl;
   private end: FormControl;
+  private equal: boolean;
 
-  constructor(el: Exp, partner: Exp, begin = false, private equal = false) {
-    super();
-    this.el = this.getNode(el);
-    this.partner = this.getNode(partner);
-    this.begin = begin ? this.el : this.partner;
-    this.end = begin ? this.partner : this.el;
+  constructor(el: ExpControl, options: Options) {
+    super(el);
+    const node = Item.getNode(options.partner);
+    if (!node) {
+      throw new Error('cannot find an element');
+    }
+    this.partner = node;
+    this.begin = options.begin ? this.el : this.partner;
+    this.end = options.begin ? this.partner : this.el;
+    this.equal = options.equal;
   }
 
   mismatch(control: FormControl) {
     if (control instanceof HTMLInputElement) {
-      const value = this.getValue(control);
+      const value = Item.getValue(control);
       if (value === null || !control.pattern) {
         return false;
       }
@@ -28,8 +40,8 @@ class Within extends Rule {
   }
 
   validate() {
-    const begin = this.getValue(this.begin);
-    const end = this.getValue(this.end);
+    const begin = Item.getValue(this.begin);
+    const end = Item.getValue(this.end);
     if (
       !begin ||
       !end ||

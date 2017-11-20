@@ -1,18 +1,26 @@
-import { FormControl } from '../types';
-import { Exp, Rule } from '../rule';
+import { ExpControl, FormControl } from '../types';
+import { Rule } from '../rule';
+import { Item } from '../item';
 
-class Equal extends Rule {
+export interface Options {
+  partner: ExpControl;
+}
+
+export class Equal extends Rule {
   name = 'equal';
 
   private partner: FormControl;
 
-  constructor(el: Exp, partner: Exp) {
-    super();
-    this.el = this.getNode(el);
-    this.partner = this.getNode(partner);
+  constructor(el: ExpControl, options: Options) {
+    super(el);
+    const node = Item.getNode(options.partner);
+    if (!node) {
+      throw new Error('cannot find an element');
+    }
+    this.partner = node;
   }
 
   validate() {
-    return this.getValue(this.el) === this.getValue(this.partner);
+    return Item.getValue(this.el) === Item.getValue(this.partner);
   }
 }
