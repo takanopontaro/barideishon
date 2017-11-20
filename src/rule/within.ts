@@ -4,8 +4,8 @@ import { Item } from '../item';
 
 export interface Options {
   partner: ExpControl;
-  begin: boolean;
-  equal: boolean;
+  begin?: boolean;
+  equal?: boolean;
 }
 
 export class Within extends Rule {
@@ -25,7 +25,7 @@ export class Within extends Rule {
     this.partner = node;
     this.begin = options.begin ? this.el : this.partner;
     this.end = options.begin ? this.partner : this.el;
-    this.equal = options.equal;
+    this.equal = !!options.equal;
   }
 
   mismatch(control: FormControl) {

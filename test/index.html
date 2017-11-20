@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+
+<body>
+  <form>
+    <table>
+      <tbody>
+        <tr>
+          <th>グループ名 [必須]</th>
+          <td>
+            <input type="text" name="" value="" required maxlength="255">
+          </td>
+        </tr>
+        <tr>
+          <th>姓</th>
+          <td>
+            <input type="text" name="" value="" required maxlength="45">
+          </td>
+        </tr>
+        <tr>
+          <th>名</th>
+          <td>
+            <input type="text" name="" value="" required maxlength="45">
+          </td>
+        </tr>
+        <tr>
+          <th>現在のメールアドレス</th>
+          <td>
+            taro@yokogawa.com
+            <input id="curemail" type="hidden" name="" value="taro@yokogawa.com">
+          </td>
+        </tr>
+        <tr>
+          <th>新しいメールアドレス</th>
+          <td>
+            <input type="email" name="" value="" required maxlength="300" data-valli="{rule:{different:{partner:'#curemail'}}}">
+          </td>
+        </tr>
+        <tr>
+          <th>新しいパスワード</th>
+          <td>
+            <input id="newpw1" type="password" name="" value="" required pattern="^\w+$" data-valli="{rule:{equal:{partner:'#newpw2'}}}">
+          </td>
+        </tr>
+        <tr>
+          <th>新しいパスワード（確認）</th>
+          <td>
+            <input id="newpw2" type="password" name="" value="" required pattern="^\w+$" data-valli="{rule:{equal:{partner:'#newpw1'}}}">
+          </td>
+        </tr>
+        <tr>
+          <th>部署名</th>
+          <td>
+            <input type="text" name="" value="" required maxlength="45">
+          </td>
+        </tr>
+        <tr>
+          <th>日付</th>
+          <td>
+            <input type="text" name="" value="" required pattern="^\d{4}/\d{2}/\d{2}$">
+          </td>
+        </tr>
+        <tr>
+          <th>ライセンスキー</th>
+          <td>
+            <input type="text" name="" value="" required pattern="^\w+$">
+          </td>
+        </tr>
+        <tr>
+          <th>郵便番号</th>
+          <td>
+            <input type="text" name="" value="" required maxlength="45" pattern="^\d+$">
+          </td>
+        </tr>
+        <tr>
+          <th>電話番号</th>
+          <td>
+            <input type="tel" name="" value="" required maxlength="45" pattern="^\d+$">
+          </td>
+        </tr>
+        <tr>
+          <th>URL</th>
+          <td>
+            <input type="url" name="" value="" required maxlength="300">
+          </td>
+        </tr>
+        <tr>
+          <th>日付範囲</th>
+          <td>
+            <input id="date1" type="text" name="" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli="{rule:{within:{partner:'#date2',begin:true,equal:true}}}">
+            <input id="date2" type="text" name="" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli="{rule:{within:{partner:'#date1',equal:true}}}">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div>
+      <label>
+        <input type="checkbox" name="" value="" required>同意する
+      </label>
+    </div>
+    <button type="submit" disabled>次へ</button>
+  </form>
+  <script src="test.spec.js"></script>
+</body>
+
+</html>
