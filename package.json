@@ -15,7 +15,7 @@
   ],
   "license": "MIT",
   "main": "lib/index.js",
-  "repository": "https://github.com/takanopontaro/barideishon",
+  "repository": "https://github.com/takanopontaro/valli",
   "scripts": {
     "start": "fixpack && del-cli lib && tsc -w",
     "test": "tsc -p test && node test/test.spec.js"
