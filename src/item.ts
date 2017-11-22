@@ -1,3 +1,19 @@
+declare var window: any;
+
+(() => {
+  if (typeof window.CustomEvent === 'function') {
+    return;
+  }
+  function CustomEvent(event: any, params: any) {
+    params = params || { bubbles: false, cancelable: false, detail: undefined };
+    const ev = document.createEvent('CustomEvent');
+    ev.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+    return ev;
+  }
+  CustomEvent.prototype = window.Event.prototype;
+  window.CustomEvent = CustomEvent;
+})();
+
 import {
   FormControl,
   ExpControl,
@@ -26,21 +42,27 @@ export class Item {
   private dirty = false;
   private rules: Rule[] = [];
   private events: string[] = [];
+  private listener: () => void;
 
-  static getNode(exp: ExpControl): FormControl | null {
-    if (typeof exp === 'string') {
-      const nodes = Item.getNodes(exp);
-      return nodes.length > 0 ? nodes[0] : null;
-    }
-    return exp;
+  static isFormControl(el: Element): boolean {
+    return (
+      el instanceof HTMLInputElement ||
+      el instanceof HTMLSelectElement ||
+      el instanceof HTMLTextAreaElement
+    );
   }
 
-  static getNodes(exp: ExpControls): FormControl[] {
-    if (typeof exp === 'string') {
-      const nodes = document.querySelectorAll(exp);
-      return <FormControl[]>Array.from(nodes);
+  static getNode(exp: ExpControl): Element | null {
+    if (exp instanceof Element) {
+      return exp;
     }
-    return exp;
+    return document.querySelector(exp);
+  }
+
+  static getNodes(exp: ExpControls): Element[] {
+    const nodes =
+      typeof exp === 'string' ? document.querySelectorAll(exp) : exp;
+    return Array.from(nodes);
   }
 
   static getValue(control: FormControl): string | null {
@@ -50,22 +72,26 @@ export class Item {
     if (control instanceof HTMLTextAreaElement) {
       return control.value;
     }
-    if (control instanceof HTMLInputElement) {
-      if (control.type === 'radio') {
-        const selector = `input[type="radio"][name="${control.name}"]`;
-        const nodes = Array.from(document.querySelectorAll(selector));
-        const found = (<HTMLInputElement[]>nodes).find(el => el.checked);
-        return found ? found.value : null;
+    if (control.type === 'radio') {
+      const selector = `input[type="radio"][name="${control.name}"]`;
+      const nodes = document.querySelectorAll<HTMLInputElement>(selector);
+      if (nodes.length === 0) {
+        throw new Error();
       }
-      if (control.type === 'checkbox') {
-        return control.checked ? control.value : null;
-      }
-      return control.value;
+      const found = Array.from(nodes).find(node => node.checked);
+      return found ? found.value : null;
     }
-    throw new Error();
+    if (control.type === 'checkbox') {
+      return control.checked ? control.value : null;
+    }
+    return control.value;
   }
 
-  constructor(private el: FormControl, options?: ItemOptions) {
+  constructor(public el: FormControl, options?: ItemOptions) {
+    this.listener = () => {
+      this.dirty = true;
+      this.validate();
+    };
     if (!options) {
       return;
     }
@@ -77,17 +103,15 @@ export class Item {
     if (typeof options.native === 'object') {
       Object.assign(this.nativeValidatorOptions, options.native);
     }
-    if (typeof options.rule !== 'undefined') {
-      for (const key in options.rule) {
-        if (options.rule.hasOwnProperty(key)) {
-          const ruleClass = RuleManager.get(key);
-          this.rules.push(new ruleClass(el, options.rule[key]));
-        }
-      }
+    if (options.rule) {
+      Object.keys(options.rule).forEach(key => {
+        const ruleClass = RuleManager.get(key);
+        this.rules.push(new ruleClass(el, options.rule[key]));
+      });
     }
   }
 
-  get nativeValidity() {
+  private get nativeValidity() {
     const {
       valueMissing,
       patternMismatch,
@@ -125,19 +149,20 @@ export class Item {
   bind(events: string[]) {
     this.events = Array.from(events);
     this.events.forEach(ev => {
-      this.el.addEventListener(ev, this.validate.bind(this), false);
+      this.el.addEventListener(ev, this.listener, false);
     });
   }
 
   unbind() {
     this.events.forEach(ev => {
-      this.el.removeEventListener(ev, this.validate.bind(this), false);
+      this.el.removeEventListener(ev, this.listener, false);
     });
     this.events.length = 0;
   }
 
-  validate() {
+  validate(dryRun = false) {
     const info: ValidityInfo = {
+      dirty: this.dirty,
       valid: false,
       native: this.el.validity,
       user: this.rules.map(rule => ({
@@ -146,7 +171,7 @@ export class Item {
       })),
     };
     info.valid = this.nativeValidity && info.user.every(r => r.valid);
-    if (this.events.length > 0) {
+    if (!dryRun && this.events.length > 0) {
       const event = new CustomEvent('valli', {
         bubbles: true,
         cancelable: true,

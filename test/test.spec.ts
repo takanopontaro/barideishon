@@ -1,23 +1,33 @@
 import { Valli } from '../src/main';
 
-const valli = new Valli('form', 'input');
+const btn: any = document.querySelector('button[type="submit"]');
+const form: any = document.querySelector('form');
+const inputs: any[] = Array.from(document.querySelectorAll('input'));
 
-const btn = document.querySelector<HTMLButtonElement>('button[type="submit"]');
-
-document.querySelector('form').addEventListener(
+form.addEventListener(
   'valli',
-  (e: CustomEvent) => {
-    btn.style.borderColor = e.detail.info.valid ? 'black' : 'red';
+  (ev: CustomEvent) => {
+    if (!ev.detail.info.dirty) {
+      return false;
+    }
+    btn.style.borderColor = ev.detail.info.valid ? 'black' : 'red';
   },
   false
 );
 
-document.querySelectorAll('input').forEach(el => {
+inputs.forEach(el => {
   el.addEventListener(
     'valli',
-    (e: CustomEvent) => {
-      e.detail.el.style.borderColor = e.detail.info.valid ? 'black' : 'red';
+    (ev: CustomEvent) => {
+      if (!ev.detail.info.dirty) {
+        return false;
+      }
+      ev.detail.el.style.borderColor = ev.detail.info.valid ? 'black' : 'red';
     },
     false
   );
 });
+
+const valli = new Valli('form', 'input').bind();
+valli.validate();
+// valli.getItem(inputs[0]).validate();

@@ -14,10 +14,10 @@ export class Different extends Rule {
   constructor(exp: ExpControl, options: Options) {
     super(exp);
     const node = Item.getNode(options.partner);
-    if (node === null) {
-      throw new Error('cannot find the element');
+    if (node === null || !Item.isFormControl(node)) {
+      throw new Error();
     }
-    this.partner = node;
+    this.partner = <FormControl>node;
   }
 
   validate() {

@@ -70,6 +70,19 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+(function () {
+    if (typeof window.CustomEvent === 'function') {
+        return;
+    }
+    function CustomEvent(event, params) {
+        params = params || { bubbles: false, cancelable: false, detail: undefined };
+        var ev = document.createEvent('CustomEvent');
+        ev.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+        return ev;
+    }
+    CustomEvent.prototype = window.Event.prototype;
+    window.CustomEvent = CustomEvent;
+})();
 var rule_manager_1 = __webpack_require__(2);
 var Item = /** @class */ (function () {
     function Item(el, options) {
@@ -88,6 +101,10 @@ var Item = /** @class */ (function () {
         this.dirty = false;
         this.rules = [];
         this.events = [];
+        this.listener = function () {
+            _this.dirty = true;
+            _this.validate();
+        };
         if (!options) {
             return;
         }
@@ -97,28 +114,27 @@ var Item = /** @class */ (function () {
         if (typeof options.native === 'object') {
             Object.assign(this.nativeValidatorOptions, options.native);
         }
-        if (typeof options.rule !== 'undefined') {
-            for (var key in options.rule) {
-                if (options.rule.hasOwnProperty(key)) {
-                    var ruleClass = rule_manager_1.RuleManager.get(key);
-                    this.rules.push(new ruleClass(el, options.rule[key]));
-                }
-            }
+        if (options.rule) {
+            Object.keys(options.rule).forEach(function (key) {
+                var ruleClass = rule_manager_1.RuleManager.get(key);
+                _this.rules.push(new ruleClass(el, options.rule[key]));
+            });
         }
     }
+    Item.isFormControl = function (el) {
+        return (el instanceof HTMLInputElement ||
+            el instanceof HTMLSelectElement ||
+            el instanceof HTMLTextAreaElement);
+    };
     Item.getNode = function (exp) {
-        if (typeof exp === 'string') {
-            var nodes = Item.getNodes(exp);
-            return nodes.length > 0 ? nodes[0] : null;
+        if (exp instanceof Element) {
+            return exp;
         }
-        return exp;
+        return document.querySelector(exp);
     };
     Item.getNodes = function (exp) {
-        if (typeof exp === 'string') {
-            var nodes = document.querySelectorAll(exp);
-            return Array.from(nodes);
-        }
-        return exp;
+        var nodes = typeof exp === 'string' ? document.querySelectorAll(exp) : exp;
+        return Array.from(nodes);
     };
     Item.getValue = function (control) {
         if (control instanceof HTMLSelectElement) {
@@ -127,19 +143,19 @@ var Item = /** @class */ (function () {
         if (control instanceof HTMLTextAreaElement) {
             return control.value;
         }
-        if (control instanceof HTMLInputElement) {
-            if (control.type === 'radio') {
-                var selector = "input[type=\"radio\"][name=\"" + control.name + "\"]";
-                var nodes = Array.from(document.querySelectorAll(selector));
-                var found = nodes.find(function (el) { return el.checked; });
-                return found ? found.value : null;
+        if (control.type === 'radio') {
+            var selector = "input[type=\"radio\"][name=\"" + control.name + "\"]";
+            var nodes = document.querySelectorAll(selector);
+            if (nodes.length === 0) {
+                throw new Error();
             }
-            if (control.type === 'checkbox') {
-                return control.checked ? control.value : null;
-            }
-            return control.value;
+            var found = Array.from(nodes).find(function (node) { return node.checked; });
+            return found ? found.value : null;
         }
-        throw new Error();
+        if (control.type === 'checkbox') {
+            return control.checked ? control.value : null;
+        }
+        return control.value;
     };
     Object.defineProperty(Item.prototype, "nativeValidity", {
         get: function () {
@@ -161,18 +177,20 @@ var Item = /** @class */ (function () {
         var _this = this;
         this.events = Array.from(events);
         this.events.forEach(function (ev) {
-            _this.el.addEventListener(ev, _this.validate.bind(_this), false);
+            _this.el.addEventListener(ev, _this.listener, false);
         });
     };
     Item.prototype.unbind = function () {
         var _this = this;
         this.events.forEach(function (ev) {
-            _this.el.removeEventListener(ev, _this.validate.bind(_this), false);
+            _this.el.removeEventListener(ev, _this.listener, false);
         });
         this.events.length = 0;
     };
-    Item.prototype.validate = function () {
+    Item.prototype.validate = function (dryRun) {
+        if (dryRun === void 0) { dryRun = false; }
         var info = {
+            dirty: this.dirty,
             valid: false,
             native: this.el.validity,
             user: this.rules.map(function (rule) { return ({
@@ -181,7 +199,7 @@ var Item = /** @class */ (function () {
             }); }),
         };
         info.valid = this.nativeValidity && info.user.every(function (r) { return r.valid; });
-        if (this.events.length > 0) {
+        if (!dryRun && this.events.length > 0) {
             var event_1 = new CustomEvent('valli', {
                 bubbles: true,
                 cancelable: true,
@@ -207,8 +225,8 @@ var item_1 = __webpack_require__(0);
 var Rule = /** @class */ (function () {
     function Rule(exp) {
         var node = item_1.Item.getNode(exp);
-        if (node === null) {
-            throw new Error('cannot find the element');
+        if (node === null || !item_1.Item.isFormControl(node)) {
+            throw new Error();
         }
         this.el = node;
     }
@@ -258,16 +276,26 @@ exports.RuleManager = RuleManager;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = __webpack_require__(4);
-var valli = new main_1.Valli('form', 'input');
 var btn = document.querySelector('button[type="submit"]');
-document.querySelector('form').addEventListener('valli', function (e) {
-    btn.style.borderColor = e.detail.info.valid ? 'black' : 'red';
+var form = document.querySelector('form');
+var inputs = Array.from(document.querySelectorAll('input'));
+form.addEventListener('valli', function (ev) {
+    if (!ev.detail.info.dirty) {
+        return false;
+    }
+    btn.style.borderColor = ev.detail.info.valid ? 'black' : 'red';
 }, false);
-document.querySelectorAll('input').forEach(function (el) {
-    el.addEventListener('valli', function (e) {
-        e.detail.el.style.borderColor = e.detail.info.valid ? 'black' : 'red';
+inputs.forEach(function (el) {
+    el.addEventListener('valli', function (ev) {
+        if (!ev.detail.info.dirty) {
+            return false;
+        }
+        ev.detail.el.style.borderColor = ev.detail.info.valid ? 'black' : 'red';
     }, false);
 });
+var valli = new main_1.Valli('form', 'input').bind();
+valli.validate();
+// valli.getItem(inputs[0]).validate();
 
 
 /***/ }),
@@ -281,25 +309,17 @@ var rule_manager_1 = __webpack_require__(2);
 var item_1 = __webpack_require__(0);
 var Valli = /** @class */ (function () {
     function Valli(expForm, expControls) {
-        var _this = this;
-        this.events = ['input'];
+        this.events = ['change', 'input'];
         this.items = [];
         var nodes = item_1.Item.getNodes(expControls);
         if (nodes.length === 0) {
             return;
         }
-        Array.from(nodes).forEach(function (node) {
-            var el = node;
-            var data = el.getAttribute('data-valli');
-            var options = data ? eval("(" + data + ")") : null;
-            var item = new item_1.Item(el, options);
-            _this.items.push(item);
-            item.bind(_this.events);
-        });
+        this.initItems(nodes);
         if (typeof expForm === 'string') {
             var el = document.querySelector(expForm);
             if (el === null) {
-                throw new Error('cannot find the element');
+                throw new Error();
             }
             this.form = el;
         }
@@ -307,13 +327,34 @@ var Valli = /** @class */ (function () {
             this.form = expForm;
         }
         this.form.noValidate = true;
-        this.validate();
     }
     Valli.addRule = function (ruleClass) {
         rule_manager_1.RuleManager.add(ruleClass);
     };
-    Valli.prototype.validate = function () {
-        this.items.forEach(function (item) { return item.validate(); });
+    Valli.prototype.initItems = function (nodes) {
+        var _this = this;
+        nodes.forEach(function (node) {
+            var el = node;
+            var data = el.getAttribute('data-valli');
+            var item = data ? new item_1.Item(el, eval("(" + data + ")")) : new item_1.Item(el);
+            _this.items.push(item);
+        });
+    };
+    Valli.prototype.bind = function () {
+        var _this = this;
+        this.items.forEach(function (item) { return item.bind(_this.events); });
+        return this;
+    };
+    Valli.prototype.unbind = function () {
+        this.items.forEach(function (item) { return item.unbind(); });
+        return this;
+    };
+    Valli.prototype.getItem = function (el) {
+        return this.items.find(function (item) { return item.el === el; });
+    };
+    Valli.prototype.validate = function (dryRun) {
+        if (dryRun === void 0) { dryRun = false; }
+        return this.items.map(function (item) { return item.validate(dryRun); });
     };
     return Valli;
 }());
@@ -345,8 +386,8 @@ var Equal = /** @class */ (function (_super) {
         var _this = _super.call(this, exp) || this;
         _this.name = 'equal';
         var node = item_1.Item.getNode(options.partner);
-        if (node === null) {
-            throw new Error('cannot find the element');
+        if (node === null || !item_1.Item.isFormControl(node)) {
+            throw new Error();
         }
         _this.partner = node;
         return _this;
@@ -384,8 +425,8 @@ var Different = /** @class */ (function (_super) {
         var _this = _super.call(this, exp) || this;
         _this.name = 'different';
         var node = item_1.Item.getNode(options.partner);
-        if (node === null) {
-            throw new Error('cannot find the element');
+        if (node === null || !item_1.Item.isFormControl(node)) {
+            throw new Error();
         }
         _this.partner = node;
         return _this;
@@ -423,8 +464,8 @@ var Within = /** @class */ (function (_super) {
         var _this = _super.call(this, exp) || this;
         _this.name = 'within';
         var node = item_1.Item.getNode(options.partner);
-        if (node === null) {
-            throw new Error('cannot find the element');
+        if (node === null || !item_1.Item.isFormControl(node)) {
+            throw new Error();
         }
         _this.partner = node;
         _this.begin = options.begin ? _this.el : _this.partner;
@@ -435,10 +476,10 @@ var Within = /** @class */ (function (_super) {
     Within.prototype.mismatch = function (control) {
         if (control instanceof HTMLInputElement) {
             var value = item_1.Item.getValue(control);
-            if (value === null || control.pattern === '') {
+            if (value === null || !control.pattern) {
                 return false;
             }
-            return new RegExp(control.pattern).test(value) !== true;
+            return !new RegExp(control.pattern).test(value);
         }
         return false;
     };

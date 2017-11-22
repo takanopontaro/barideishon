@@ -19,22 +19,22 @@ export class Within extends Rule {
   constructor(exp: ExpControl, options: Options) {
     super(exp);
     const node = Item.getNode(options.partner);
-    if (node === null) {
-      throw new Error('cannot find the element');
+    if (node === null || !Item.isFormControl(node)) {
+      throw new Error();
     }
-    this.partner = node;
+    this.partner = <FormControl>node;
     this.begin = options.begin ? this.el : this.partner;
     this.end = options.begin ? this.partner : this.el;
     this.equal = !!options.equal;
   }
 
-  mismatch(control: FormControl) {
+  private mismatch(control: FormControl) {
     if (control instanceof HTMLInputElement) {
       const value = Item.getValue(control);
-      if (value === null || control.pattern === '') {
+      if (value === null || !control.pattern) {
         return false;
       }
-      return new RegExp(control.pattern).test(value) !== true;
+      return !new RegExp(control.pattern).test(value);
     }
     return false;
   }

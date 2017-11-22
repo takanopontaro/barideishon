@@ -8,10 +8,10 @@ export class Rule {
 
   constructor(exp: ExpControl) {
     const node = Item.getNode(exp);
-    if (node === null) {
-      throw new Error('cannot find the element');
+    if (node === null || !Item.isFormControl(node)) {
+      throw new Error();
     }
-    this.el = node;
+    this.el = <FormControl>node;
   }
 
   validate(): boolean {
