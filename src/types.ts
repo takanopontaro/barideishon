@@ -1,3 +1,6 @@
+import { Rule } from './rule';
+
+export type RuleClass = new (...args: any[]) => Rule;
 export type ExpForm = string | HTMLFormElement;
 export type ExpControl = string | FormControl;
 export type ExpControls = string | FormControl[];

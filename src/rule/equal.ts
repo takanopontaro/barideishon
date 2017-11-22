@@ -11,11 +11,11 @@ export class Equal extends Rule {
 
   private partner: FormControl;
 
-  constructor(el: ExpControl, options: Options) {
-    super(el);
+  constructor(exp: ExpControl, options: Options) {
+    super(exp);
     const node = Item.getNode(options.partner);
-    if (!node) {
-      throw new Error('cannot find an element');
+    if (node === null) {
+      throw new Error('cannot find the element');
     }
     this.partner = node;
   }

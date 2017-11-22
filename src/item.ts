@@ -125,13 +125,13 @@ export class Item {
   bind(events: string[]) {
     this.events = Array.from(events);
     this.events.forEach(ev => {
-      this.el.addEventListener(ev, this.validate, false);
+      this.el.addEventListener(ev, this.validate.bind(this), false);
     });
   }
 
   unbind() {
     this.events.forEach(ev => {
-      this.el.removeEventListener(ev, this.validate, false);
+      this.el.removeEventListener(ev, this.validate.bind(this), false);
     });
     this.events.length = 0;
   }
@@ -148,6 +148,8 @@ export class Item {
     info.valid = this.nativeValidity && info.user.every(r => r.valid);
     if (this.events.length > 0) {
       const event = new CustomEvent('valli', {
+        bubbles: true,
+        cancelable: true,
         detail: { el: this.el, info },
       });
       this.el.dispatchEvent(event);

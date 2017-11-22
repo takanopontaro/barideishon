@@ -6,10 +6,10 @@ export class Rule {
 
   protected el: FormControl;
 
-  constructor(el: ExpControl) {
-    const node = Item.getNode(el);
-    if (!node) {
-      throw new Error('cannot find an element');
+  constructor(exp: ExpControl) {
+    const node = Item.getNode(exp);
+    if (node === null) {
+      throw new Error('cannot find the element');
     }
     this.el = node;
   }

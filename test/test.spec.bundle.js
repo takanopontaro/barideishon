@@ -161,13 +161,13 @@ var Item = /** @class */ (function () {
         var _this = this;
         this.events = Array.from(events);
         this.events.forEach(function (ev) {
-            _this.el.addEventListener(ev, _this.validate, false);
+            _this.el.addEventListener(ev, _this.validate.bind(_this), false);
         });
     };
     Item.prototype.unbind = function () {
         var _this = this;
         this.events.forEach(function (ev) {
-            _this.el.removeEventListener(ev, _this.validate, false);
+            _this.el.removeEventListener(ev, _this.validate.bind(_this), false);
         });
         this.events.length = 0;
     };
@@ -183,6 +183,8 @@ var Item = /** @class */ (function () {
         info.valid = this.nativeValidity && info.user.every(function (r) { return r.valid; });
         if (this.events.length > 0) {
             var event_1 = new CustomEvent('valli', {
+                bubbles: true,
+                cancelable: true,
                 detail: { el: this.el, info: info },
             });
             this.el.dispatchEvent(event_1);
@@ -192,7 +194,7 @@ var Item = /** @class */ (function () {
     return Item;
 }());
 exports.Item = Item;
-//# sourceMappingURL=item.js.map
+
 
 /***/ }),
 /* 1 */
@@ -203,10 +205,10 @@ exports.Item = Item;
 Object.defineProperty(exports, "__esModule", { value: true });
 var item_1 = __webpack_require__(0);
 var Rule = /** @class */ (function () {
-    function Rule(el) {
-        var node = item_1.Item.getNode(el);
-        if (!node) {
-            throw new Error('cannot find an element');
+    function Rule(exp) {
+        var node = item_1.Item.getNode(exp);
+        if (node === null) {
+            throw new Error('cannot find the element');
         }
         this.el = node;
     }
@@ -216,7 +218,7 @@ var Rule = /** @class */ (function () {
     return Rule;
 }());
 exports.Rule = Rule;
-//# sourceMappingURL=rule.js.map
+
 
 /***/ }),
 /* 2 */
@@ -225,9 +227,9 @@ exports.Rule = Rule;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var equal_1 = __webpack_require__(6);
-var different_1 = __webpack_require__(7);
-var within_1 = __webpack_require__(8);
+var equal_1 = __webpack_require__(5);
+var different_1 = __webpack_require__(6);
+var within_1 = __webpack_require__(7);
 var RuleManager = /** @class */ (function () {
     function RuleManager() {
     }
@@ -246,19 +248,26 @@ var RuleManager = /** @class */ (function () {
     return RuleManager;
 }());
 exports.RuleManager = RuleManager;
-//# sourceMappingURL=rule-manager.js.map
+
 
 /***/ }),
 /* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_____default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0____);
 
-
-const valli = new __WEBPACK_IMPORTED_MODULE_0____["Valli"]('form', 'input');
+Object.defineProperty(exports, "__esModule", { value: true });
+var main_1 = __webpack_require__(4);
+var valli = new main_1.Valli('form', 'input');
+var btn = document.querySelector('button[type="submit"]');
+document.querySelector('form').addEventListener('valli', function (e) {
+    btn.style.borderColor = e.detail.info.valid ? 'black' : 'red';
+}, false);
+document.querySelectorAll('input').forEach(function (el) {
+    el.addEventListener('valli', function (e) {
+        e.detail.el.style.borderColor = e.detail.info.valid ? 'black' : 'red';
+    }, false);
+});
 
 
 /***/ }),
@@ -268,24 +277,14 @@ const valli = new __WEBPACK_IMPORTED_MODULE_0____["Valli"]('form', 'input');
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(5);
-exports.Valli = main_1.Valli;
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var rule_manager_1 = __webpack_require__(2);
 var item_1 = __webpack_require__(0);
 var Valli = /** @class */ (function () {
-    function Valli(form, controls) {
+    function Valli(expForm, expControls) {
         var _this = this;
-        this.events = ['change', 'keyup'];
-        var nodes = item_1.Item.getNodes(controls);
+        this.events = ['input'];
+        this.items = [];
+        var nodes = item_1.Item.getNodes(expControls);
         if (nodes.length === 0) {
             return;
         }
@@ -297,11 +296,15 @@ var Valli = /** @class */ (function () {
             _this.items.push(item);
             item.bind(_this.events);
         });
-        if (typeof form === 'string') {
-            this.form = document.querySelector(form);
+        if (typeof expForm === 'string') {
+            var el = document.querySelector(expForm);
+            if (el === null) {
+                throw new Error('cannot find the element');
+            }
+            this.form = el;
         }
         else {
-            this.form = form;
+            this.form = expForm;
         }
         this.form.noValidate = true;
         this.validate();
@@ -315,7 +318,46 @@ var Valli = /** @class */ (function () {
     return Valli;
 }());
 exports.Valli = Valli;
-//# sourceMappingURL=main.js.map
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var rule_1 = __webpack_require__(1);
+var item_1 = __webpack_require__(0);
+var Equal = /** @class */ (function (_super) {
+    __extends(Equal, _super);
+    function Equal(exp, options) {
+        var _this = _super.call(this, exp) || this;
+        _this.name = 'equal';
+        var node = item_1.Item.getNode(options.partner);
+        if (node === null) {
+            throw new Error('cannot find the element');
+        }
+        _this.partner = node;
+        return _this;
+    }
+    Equal.prototype.validate = function () {
+        return item_1.Item.getValue(this.el) === item_1.Item.getValue(this.partner);
+    };
+    return Equal;
+}(rule_1.Rule));
+exports.Equal = Equal;
+
 
 /***/ }),
 /* 6 */
@@ -336,25 +378,25 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var rule_1 = __webpack_require__(1);
 var item_1 = __webpack_require__(0);
-var Equal = /** @class */ (function (_super) {
-    __extends(Equal, _super);
-    function Equal(el, options) {
-        var _this = _super.call(this, el) || this;
-        _this.name = 'equal';
+var Different = /** @class */ (function (_super) {
+    __extends(Different, _super);
+    function Different(exp, options) {
+        var _this = _super.call(this, exp) || this;
+        _this.name = 'different';
         var node = item_1.Item.getNode(options.partner);
-        if (!node) {
-            throw new Error('cannot find an element');
+        if (node === null) {
+            throw new Error('cannot find the element');
         }
         _this.partner = node;
         return _this;
     }
-    Equal.prototype.validate = function () {
-        return item_1.Item.getValue(this.el) === item_1.Item.getValue(this.partner);
+    Different.prototype.validate = function () {
+        return item_1.Item.getValue(this.el) !== item_1.Item.getValue(this.partner);
     };
-    return Equal;
+    return Different;
 }(rule_1.Rule));
-exports.Equal = Equal;
-//# sourceMappingURL=equal.js.map
+exports.Different = Different;
+
 
 /***/ }),
 /* 7 */
@@ -375,53 +417,14 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var rule_1 = __webpack_require__(1);
 var item_1 = __webpack_require__(0);
-var Different = /** @class */ (function (_super) {
-    __extends(Different, _super);
-    function Different(el, options) {
-        var _this = _super.call(this, el) || this;
-        _this.name = 'different';
-        var node = item_1.Item.getNode(options.partner);
-        if (!node) {
-            throw new Error('cannot find an element');
-        }
-        _this.partner = node;
-        return _this;
-    }
-    Different.prototype.validate = function () {
-        return item_1.Item.getValue(this.el) !== item_1.Item.getValue(this.partner);
-    };
-    return Different;
-}(rule_1.Rule));
-exports.Different = Different;
-//# sourceMappingURL=different.js.map
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var rule_1 = __webpack_require__(1);
-var item_1 = __webpack_require__(0);
 var Within = /** @class */ (function (_super) {
     __extends(Within, _super);
-    function Within(el, options) {
-        var _this = _super.call(this, el) || this;
+    function Within(exp, options) {
+        var _this = _super.call(this, exp) || this;
         _this.name = 'within';
         var node = item_1.Item.getNode(options.partner);
-        if (!node) {
-            throw new Error('cannot find an element');
+        if (node === null) {
+            throw new Error('cannot find the element');
         }
         _this.partner = node;
         _this.begin = options.begin ? _this.el : _this.partner;
@@ -432,10 +435,10 @@ var Within = /** @class */ (function (_super) {
     Within.prototype.mismatch = function (control) {
         if (control instanceof HTMLInputElement) {
             var value = item_1.Item.getValue(control);
-            if (value === null || !control.pattern) {
+            if (value === null || control.pattern === '') {
                 return false;
             }
-            return !new RegExp(control.pattern).test(value);
+            return new RegExp(control.pattern).test(value) !== true;
         }
         return false;
     };
@@ -455,7 +458,8 @@ var Within = /** @class */ (function (_super) {
     return Within;
 }(rule_1.Rule));
 exports.Within = Within;
-//# sourceMappingURL=within.js.map
+
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=test.spec.bundle.js.map

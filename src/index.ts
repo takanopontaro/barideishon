@@ -1,6 +1,7 @@
 export { Valli } from './main';
 
 export {
+  RuleClass,
   ExpForm,
   ExpControl,
   ExpControls,

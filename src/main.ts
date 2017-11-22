@@ -1,4 +1,5 @@
 import {
+  RuleClass,
   ExpForm,
   ExpControl,
   ExpControls,
@@ -7,20 +8,21 @@ import {
 } from './types';
 
 import { RuleManager } from './rule-manager';
-import { Item } from './item';
 import { Rule } from './rule';
+import { Item } from './item';
 
 export class Valli {
-  private form: HTMLFormElement;
-  private items: Item[];
-  private events = ['change', 'keyup'];
+  events = ['input'];
 
-  static addRule(ruleClass: any) {
+  private form: HTMLFormElement;
+  private items: Item[] = [];
+
+  static addRule(ruleClass: RuleClass) {
     RuleManager.add(ruleClass);
   }
 
-  constructor(form: ExpForm, controls: ExpControls) {
-    const nodes = Item.getNodes(controls);
+  constructor(expForm: ExpForm, expControls: ExpControls) {
+    const nodes = Item.getNodes(expControls);
     if (nodes.length === 0) {
       return;
     }
@@ -32,10 +34,14 @@ export class Valli {
       this.items.push(item);
       item.bind(this.events);
     });
-    if (typeof form === 'string') {
-      this.form = <HTMLFormElement>document.querySelector(form);
+    if (typeof expForm === 'string') {
+      const el = document.querySelector<HTMLFormElement>(expForm);
+      if (el === null) {
+        throw new Error('cannot find the element');
+      }
+      this.form = el;
     } else {
-      this.form = form;
+      this.form = expForm;
     }
     this.form.noValidate = true;
     this.validate();

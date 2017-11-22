@@ -16,11 +16,11 @@ export class Within extends Rule {
   private end: FormControl;
   private equal: boolean;
 
-  constructor(el: ExpControl, options: Options) {
-    super(el);
+  constructor(exp: ExpControl, options: Options) {
+    super(exp);
     const node = Item.getNode(options.partner);
-    if (!node) {
-      throw new Error('cannot find an element');
+    if (node === null) {
+      throw new Error('cannot find the element');
     }
     this.partner = node;
     this.begin = options.begin ? this.el : this.partner;
@@ -31,10 +31,10 @@ export class Within extends Rule {
   mismatch(control: FormControl) {
     if (control instanceof HTMLInputElement) {
       const value = Item.getValue(control);
-      if (value === null || !control.pattern) {
+      if (value === null || control.pattern === '') {
         return false;
       }
-      return !new RegExp(control.pattern).test(value);
+      return new RegExp(control.pattern).test(value) !== true;
     }
     return false;
   }

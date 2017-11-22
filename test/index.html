@@ -11,21 +11,21 @@
     <table>
       <tbody>
         <tr>
-          <th>グループ名 [必須]</th>
+          <th>グループ名 [必須] [5文字以内]</th>
           <td>
-            <input type="text" name="" value="" required maxlength="255">
+            <input type="text" name="" value="" required maxlength="5">
           </td>
         </tr>
         <tr>
-          <th>姓</th>
+          <th>姓 [5文字以内]</th>
           <td>
-            <input type="text" name="" value="" required maxlength="45">
+            <input type="text" name="" value="" maxlength="5">
           </td>
         </tr>
         <tr>
           <th>名</th>
           <td>
-            <input type="text" name="" value="" required maxlength="45">
+            <input type="text" name="" value="">
           </td>
         </tr>
         <tr>
@@ -38,55 +38,37 @@
         <tr>
           <th>新しいメールアドレス</th>
           <td>
-            <input type="email" name="" value="" required maxlength="300" data-valli="{rule:{different:{partner:'#curemail'}}}">
+            <input type="email" name="" value="" data-valli="{rule:{different:{partner:'#curemail'}}}">
           </td>
         </tr>
         <tr>
           <th>新しいパスワード</th>
           <td>
-            <input id="newpw1" type="password" name="" value="" required pattern="^\w+$" data-valli="{rule:{equal:{partner:'#newpw2'}}}">
+            <input id="newpw1" type="password" name="" value="" pattern="^\w+$" data-valli="{rule:{equal:{partner:'#newpw2'}}}">
           </td>
         </tr>
         <tr>
           <th>新しいパスワード（確認）</th>
           <td>
-            <input id="newpw2" type="password" name="" value="" required pattern="^\w+$" data-valli="{rule:{equal:{partner:'#newpw1'}}}">
-          </td>
-        </tr>
-        <tr>
-          <th>部署名</th>
-          <td>
-            <input type="text" name="" value="" required maxlength="45">
+            <input id="newpw2" type="password" name="" value="" pattern="^\w+$" data-valli="{rule:{equal:{partner:'#newpw1'}}}">
           </td>
         </tr>
         <tr>
           <th>日付</th>
           <td>
-            <input type="text" name="" value="" required pattern="^\d{4}/\d{2}/\d{2}$">
-          </td>
-        </tr>
-        <tr>
-          <th>ライセンスキー</th>
-          <td>
-            <input type="text" name="" value="" required pattern="^\w+$">
-          </td>
-        </tr>
-        <tr>
-          <th>郵便番号</th>
-          <td>
-            <input type="text" name="" value="" required maxlength="45" pattern="^\d+$">
+            <input type="text" name="" value="" pattern="^\d{4}/\d{2}/\d{2}$">
           </td>
         </tr>
         <tr>
           <th>電話番号</th>
           <td>
-            <input type="tel" name="" value="" required maxlength="45" pattern="^\d+$">
+            <input type="tel" name="" value="">
           </td>
         </tr>
         <tr>
           <th>URL</th>
           <td>
-            <input type="url" name="" value="" required maxlength="300">
+            <input type="url" name="" value="">
           </td>
         </tr>
         <tr>
