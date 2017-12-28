@@ -11,8 +11,7 @@ export class RuleManager {
   };
 
   static add(ruleClass: RuleClass) {
-    const name = ruleClass.name.replace(/^./, s => s.toLowerCase());
-    RuleManager.rule[name] = ruleClass;
+    RuleManager.rule[ruleClass.name] = ruleClass;
   }
 
   static get(name: string) {

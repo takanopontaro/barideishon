@@ -1,20 +1,11 @@
-import { ExpControl, FormControl } from './types';
-import { Item } from './item';
+import { FormControl } from './types';
 
 export class Rule {
   name: string;
 
-  protected el: FormControl;
+  constructor(protected el: FormControl) {}
 
-  constructor(exp: ExpControl) {
-    const node = Item.getNode(exp);
-    if (node === null || !Item.isFormControl(node)) {
-      throw new Error();
-    }
-    this.el = <FormControl>node;
-  }
-
-  validate(): boolean {
+  validate() {
     return false;
   }
 }

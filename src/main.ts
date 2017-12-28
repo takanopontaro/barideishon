@@ -1,52 +1,38 @@
-import {
-  RuleClass,
-  ExpForm,
-  ExpControl,
-  ExpControls,
-  FormControl,
-  ValidityInfo,
-  ItemOptions,
-} from './types';
+import { RuleClass, FormControl, ValidityInfo, ItemOptions } from './types';
 
 import { RuleManager } from './rule-manager';
 import { Rule } from './rule';
 import { Item } from './item';
 
 export class Valli {
+  customDataName = 'data-valli';
   events = ['change', 'input'];
 
-  private form: HTMLFormElement;
   private items: Item[] = [];
 
   static addRule(ruleClass: RuleClass) {
     RuleManager.add(ruleClass);
   }
 
-  constructor(expForm: ExpForm, expControls: ExpControls) {
-    const nodes = Item.getNodes(expControls);
-    if (nodes.length === 0) {
-      return;
-    }
-    this.initItems(nodes);
-    if (typeof expForm === 'string') {
-      const el = document.querySelector(expForm);
-      if (el === null) {
-        throw new Error();
-      }
-      this.form = <HTMLFormElement>el;
-    } else {
-      this.form = expForm;
-    }
+  constructor(private form: HTMLFormElement, controls: FormControl[]) {
     this.form.noValidate = true;
-  }
-
-  private initItems(nodes: Element[]) {
-    nodes.forEach(node => {
-      const el = <FormControl>node;
-      const data = el.getAttribute('data-valli');
-      const item = data ? new Item(el, eval(`(${data})`)) : new Item(el);
+    controls.forEach(el => {
+      const options = this.getOptions(el);
+      const item = options ? new Item(el, options) : new Item(el);
       this.items.push(item);
     });
+  }
+
+  private getOptions(el: FormControl): ItemOptions | undefined {
+    const data = el.getAttribute(this.customDataName);
+    if (data === null || !data.trim()) {
+      return;
+    }
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      return;
+    }
   }
 
   bind() {
@@ -55,11 +41,11 @@ export class Valli {
   }
 
   unbind() {
-    this.items.forEach(item => item.unbind());
+    this.items.forEach(item => item.unbind(this.events));
     return this;
   }
 
-  getItem(el: Element): Item | undefined {
+  getItem(el: FormControl): Item | undefined {
     return this.items.find(item => item.el === el);
   }
 

@@ -1,9 +1,9 @@
-import { ExpControl, FormControl } from '../types';
+import { getValue } from '../toolbelt';
+import { FormControl } from '../types';
 import { Rule } from '../rule';
-import { Item } from '../item';
 
 export interface Options {
-  partner: ExpControl;
+  partner: string;
 }
 
 export class Equal extends Rule {
@@ -11,16 +11,12 @@ export class Equal extends Rule {
 
   private partner: FormControl;
 
-  constructor(exp: ExpControl, options: Options) {
-    super(exp);
-    const node = Item.getNode(options.partner);
-    if (node === null || !Item.isFormControl(node)) {
-      throw new Error();
-    }
-    this.partner = <FormControl>node;
+  constructor(el: FormControl, options: Options) {
+    super(el);
+    this.partner = <FormControl>document.querySelector(options.partner);
   }
 
   validate() {
-    return Item.getValue(this.el) === Item.getValue(this.partner);
+    return getValue(this.el) === getValue(this.partner);
   }
 }

@@ -6,18 +6,31 @@
     "declaration": true,
     "declarationDir": "lib",
     "outDir": "lib",
-    "lib": ["es6", "dom"],
+    "lib": [
+      "es6",
+      "dom"
+    ],
     "strict": true,
-    "typeRoots": ["./types", "./node_modules/@types"],
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ],
     "baseUrl": ".",
     "paths": {
-      "*": ["./types/*"]
+      "*": [
+        "./types/*"
+      ]
     }
   },
   "formatCodeOptions": {
     "indentSize": 2,
     "tabSize": 2
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }

@@ -1,9 +1,9 @@
-import { ExpControl, FormControl } from '../types';
+import { getValue } from '../toolbelt';
+import { FormControl } from '../types';
 import { Rule } from '../rule';
-import { Item } from '../item';
 
 export interface Options {
-  partner: ExpControl;
+  partner: string;
   begin?: boolean;
   equal?: boolean;
 }
@@ -16,32 +16,28 @@ export class Within extends Rule {
   private end: FormControl;
   private equal: boolean;
 
-  constructor(exp: ExpControl, options: Options) {
-    super(exp);
-    const node = Item.getNode(options.partner);
-    if (node === null || !Item.isFormControl(node)) {
-      throw new Error();
-    }
-    this.partner = <FormControl>node;
+  constructor(el: FormControl, options: Options) {
+    super(el);
+    this.partner = <FormControl>document.querySelector(options.partner);
     this.begin = options.begin ? this.el : this.partner;
     this.end = options.begin ? this.partner : this.el;
     this.equal = !!options.equal;
   }
 
-  private mismatch(control: FormControl) {
-    if (control instanceof HTMLInputElement) {
-      const value = Item.getValue(control);
-      if (value === null || !control.pattern) {
+  private mismatch(el: FormControl) {
+    if (el instanceof HTMLInputElement) {
+      const value = getValue(el);
+      if (value === null || !el.pattern) {
         return false;
       }
-      return !new RegExp(control.pattern).test(value);
+      return !new RegExp(el.pattern).test(value);
     }
     return false;
   }
 
   validate() {
-    const begin = Item.getValue(this.begin);
-    const end = Item.getValue(this.end);
+    const begin = getValue(this.begin);
+    const end = getValue(this.end);
     if (
       !begin ||
       !end ||

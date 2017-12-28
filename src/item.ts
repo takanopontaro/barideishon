@@ -1,23 +1,5 @@
-declare var window: any;
-
-(() => {
-  if (typeof window.CustomEvent === 'function') {
-    return;
-  }
-  function CustomEvent(event: any, params: any) {
-    params = params || { bubbles: false, cancelable: false, detail: undefined };
-    const ev = document.createEvent('CustomEvent');
-    ev.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-    return ev;
-  }
-  CustomEvent.prototype = window.Event.prototype;
-  window.CustomEvent = CustomEvent;
-})();
-
 import {
   FormControl,
-  ExpControl,
-  ExpControls,
   NativeValidatorOptions,
   ValidityInfo,
   ValidityResult,
@@ -26,6 +8,7 @@ import {
 
 import { RuleManager } from './rule-manager';
 import { Rule } from './rule';
+import { mapValues } from 'lodash-es';
 
 export class Item {
   private nativeValidatorOptions: NativeValidatorOptions = {
@@ -41,66 +24,18 @@ export class Item {
 
   private dirty = false;
   private rules: Rule[] = [];
-  private events: string[] = [];
-  private listener: () => void;
-
-  static isFormControl(el: Element): boolean {
-    return (
-      el instanceof HTMLInputElement ||
-      el instanceof HTMLSelectElement ||
-      el instanceof HTMLTextAreaElement
-    );
-  }
-
-  static getNode(exp: ExpControl): Element | null {
-    if (exp instanceof Element) {
-      return exp;
-    }
-    return document.querySelector(exp);
-  }
-
-  static getNodes(exp: ExpControls): Element[] {
-    const nodes =
-      typeof exp === 'string' ? document.querySelectorAll(exp) : exp;
-    return Array.from(nodes);
-  }
-
-  static getValue(control: FormControl): string | null {
-    if (control instanceof HTMLSelectElement) {
-      return control.options[control.selectedIndex].value;
-    }
-    if (control instanceof HTMLTextAreaElement) {
-      return control.value;
-    }
-    if (control.type === 'radio') {
-      const selector = `input[type="radio"][name="${control.name}"]`;
-      const nodes = document.querySelectorAll<HTMLInputElement>(selector);
-      if (nodes.length === 0) {
-        throw new Error();
-      }
-      const found = Array.from(nodes).find(node => node.checked);
-      return found ? found.value : null;
-    }
-    if (control.type === 'checkbox') {
-      return control.checked ? control.value : null;
-    }
-    return control.value;
-  }
+  private listener = () => {
+    this.dirty = true;
+    this.validate();
+  };
 
   constructor(public el: FormControl, options?: ItemOptions) {
-    this.listener = () => {
-      this.dirty = true;
-      this.validate();
-    };
     if (!options) {
       return;
     }
     if (typeof options.native === 'boolean') {
-      Object.keys(this.nativeValidatorOptions).forEach(
-        key => ((<any>this.nativeValidatorOptions)[key] = options.native)
-      );
-    }
-    if (typeof options.native === 'object') {
+      mapValues(this.nativeValidatorOptions, () => options.native);
+    } else if (typeof options.native === 'object') {
       Object.assign(this.nativeValidatorOptions, options.native);
     }
     if (options.rule) {
@@ -147,17 +82,11 @@ export class Item {
   }
 
   bind(events: string[]) {
-    this.events = Array.from(events);
-    this.events.forEach(ev => {
-      this.el.addEventListener(ev, this.listener, false);
-    });
+    events.forEach(ev => this.el.addEventListener(ev, this.listener, false));
   }
 
-  unbind() {
-    this.events.forEach(ev => {
-      this.el.removeEventListener(ev, this.listener, false);
-    });
-    this.events.length = 0;
+  unbind(events: string[]) {
+    events.forEach(ev => this.el.removeEventListener(ev, this.listener, false));
   }
 
   validate(dryRun = false) {
@@ -165,13 +94,13 @@ export class Item {
       dirty: this.dirty,
       valid: false,
       native: this.el.validity,
-      user: this.rules.map(rule => ({
+      custom: this.rules.map(rule => ({
         name: rule.name,
         valid: rule.validate(),
       })),
     };
-    info.valid = this.nativeValidity && info.user.every(r => r.valid);
-    if (!dryRun && this.events.length > 0) {
+    info.valid = this.nativeValidity && info.custom.every(r => r.valid);
+    if (!dryRun) {
       const event = new CustomEvent('valli', {
         bubbles: true,
         cancelable: true,

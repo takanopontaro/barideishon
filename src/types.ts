@@ -1,9 +1,6 @@
 import { Rule } from './rule';
 
 export type RuleClass = new (...args: any[]) => Rule;
-export type ExpForm = string | HTMLFormElement;
-export type ExpControl = string | Element;
-export type ExpControls = string | Element[] | NodeListOf<Element>;
 
 export type FormControl =
   | HTMLSelectElement
@@ -25,7 +22,7 @@ export interface ValidityInfo {
   dirty: boolean;
   valid: boolean;
   native: ValidityState;
-  user: ValidityResult[];
+  custom: ValidityResult[];
 }
 
 export interface ValidityResult {
