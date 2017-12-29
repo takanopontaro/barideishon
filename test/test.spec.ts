@@ -1,33 +1,13 @@
-import { Valli } from '../src/main';
+import * as $ from 'jquery';
+import { Valli, FormControl } from '../src/';
 
-const btn: any = document.querySelector('button[type="submit"]');
-const form: any = document.querySelector('form');
-const inputs: any[] = Array.from(document.querySelectorAll('input'));
+const form = $('form')[0] as HTMLFormElement;
+const controls = $('input', form).get() as FormControl[];
 
-form.addEventListener(
-  'valli',
-  (ev: CustomEvent) => {
-    if (!ev.detail.info.dirty) {
-      return false;
-    }
-    btn.style.borderColor = ev.detail.info.valid ? 'black' : 'red';
-  },
-  false
-);
-
-inputs.forEach(el => {
-  el.addEventListener(
-    'valli',
-    (ev: CustomEvent) => {
-      if (!ev.detail.info.dirty) {
-        return false;
-      }
-      ev.detail.el.style.borderColor = ev.detail.info.valid ? 'black' : 'red';
-    },
-    false
-  );
+$(form).on('valli', ({ originalEvent }) => {
+  const data = (<CustomEvent>originalEvent).detail;
+  console.log(data);
 });
 
-const valli = new Valli('form', 'input').bind();
+const valli = new Valli({ form, controls });
 valli.validate();
-// valli.getItem(inputs[0]).validate();

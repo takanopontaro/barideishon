@@ -6,9 +6,11 @@
     "lodash-es": "^4.17.4"
   },
   "devDependencies": {
+    "@types/jquery": "^3.2.17",
     "@types/lodash-es": "^4.17.0",
     "del-cli": "^1.1.0",
     "fixpack": "^2.3.1",
+    "jquery": "^3.2.1",
     "ts-loader": "^3.1.1",
     "tslint": "^5.7.0",
     "typescript": "^2.4.2",
@@ -21,7 +23,7 @@
   "main": "lib/index.js",
   "repository": "https://github.com/takanopontaro/valli",
   "scripts": {
-    "start": "fixpack && del-cli lib && tsc -w",
+    "start": "fixpack && del-cli lib && tsc",
     "test": "webpack --config test/webpack.config.js"
   },
   "types": "lib/index.d.ts"

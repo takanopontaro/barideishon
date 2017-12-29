@@ -19,7 +19,9 @@ export interface NativeValidatorOptions {
 }
 
 export interface ValidityInfo {
-  dirty: boolean;
+  type: string;
+  value: string | undefined;
+  prev: string | undefined;
   valid: boolean;
   native: ValidityState;
   custom: ValidityResult[];
@@ -30,8 +32,22 @@ export interface ValidityResult {
   valid: boolean;
 }
 
+export interface ItemConf {
+  el: FormControl;
+  events: string[];
+  wait: number;
+}
+
 export interface ItemOptions {
   native?: boolean | Partial<NativeValidatorOptions>;
   rule?: any;
   [key: string]: any;
+}
+
+export interface ValliConf {
+  form: HTMLFormElement;
+  controls: FormControl[];
+  attrName?: string;
+  events?: string[];
+  wait?: number;
 }

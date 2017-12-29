@@ -27,7 +27,7 @@ export class Within extends Rule {
   private mismatch(el: FormControl) {
     if (el instanceof HTMLInputElement) {
       const value = getValue(el);
-      if (value === null || !el.pattern) {
+      if (value === undefined || !el.pattern) {
         return false;
       }
       return !new RegExp(el.pattern).test(value);

@@ -1,36 +1,16 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es5",
-    "sourceMap": true,
+    "target": "es2015",
     "declaration": true,
     "declarationDir": "lib",
     "outDir": "lib",
     "lib": [
-      "es6",
+      "es2015",
       "dom"
     ],
-    "strict": true,
-    "typeRoots": [
-      "./types",
-      "./node_modules/@types"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "./types/*"
-      ]
-    }
-  },
-  "formatCodeOptions": {
-    "indentSize": 2,
-    "tabSize": 2
+    "strict": true
   },
   "include": [
     "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
   ]
 }

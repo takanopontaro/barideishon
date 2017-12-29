@@ -3,14 +3,19 @@ import {
   NativeValidatorOptions,
   ValidityInfo,
   ValidityResult,
+  ItemConf,
   ItemOptions,
 } from './types';
 
+import { getValue } from './toolbelt';
 import { RuleManager } from './rule-manager';
 import { Rule } from './rule';
-import { mapValues } from 'lodash-es';
+import { mapValues, debounce } from 'lodash-es';
 
 export class Item {
+  el: FormControl;
+  destroy: () => void;
+
   private nativeValidatorOptions: NativeValidatorOptions = {
     required: true,
     pattern: true,
@@ -22,14 +27,13 @@ export class Item {
     type: true,
   };
 
-  private dirty = false;
+  private value: string | undefined;
   private rules: Rule[] = [];
-  private listener = () => {
-    this.dirty = true;
-    this.validate();
-  };
 
-  constructor(public el: FormControl, options?: ItemOptions) {
+  constructor({ el, events, wait }: ItemConf, options?: ItemOptions) {
+    this.el = el;
+    this.value = getValue(el);
+    this.destroy = this.bind(events, wait);
     if (!options) {
       return;
     }
@@ -44,6 +48,10 @@ export class Item {
         this.rules.push(new ruleClass(el, options.rule[key]));
       });
     }
+  }
+
+  private handler(ev: Event) {
+    this.validate(false, ev.type);
   }
 
   private get nativeValidity() {
@@ -81,17 +89,20 @@ export class Item {
     );
   }
 
-  bind(events: string[]) {
-    events.forEach(ev => this.el.addEventListener(ev, this.listener, false));
+  private bind(events: string[], wait: number): () => void {
+    const listener = debounce(this.handler.bind(this), wait);
+    events.forEach(ev => this.el.addEventListener(ev, listener, false));
+    return () => {
+      events.forEach(ev => this.el.removeEventListener(ev, listener, false));
+      delete this.destroy;
+    };
   }
 
-  unbind(events: string[]) {
-    events.forEach(ev => this.el.removeEventListener(ev, this.listener, false));
-  }
-
-  validate(dryRun = false) {
+  validate(dryRun = false, type = '') {
     const info: ValidityInfo = {
-      dirty: this.dirty,
+      type,
+      value: getValue(this.el),
+      prev: this.value,
       valid: false,
       native: this.el.validity,
       custom: this.rules.map(rule => ({
@@ -100,11 +111,12 @@ export class Item {
       })),
     };
     info.valid = this.nativeValidity && info.custom.every(r => r.valid);
+    this.value = info.value;
     if (!dryRun) {
       const event = new CustomEvent('valli', {
         bubbles: true,
         cancelable: true,
-        detail: { el: this.el, info },
+        detail: { ...info, el: this.el },
       });
       this.el.dispatchEvent(event);
     }

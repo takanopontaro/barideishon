@@ -13,76 +13,76 @@
         <tr>
           <th>グループ名 [必須] [5文字以内]</th>
           <td>
-            <input type="text" name="" value="" required maxlength="5">
+            <input type="text" name="group" value="" required maxlength="5">
           </td>
         </tr>
         <tr>
           <th>姓 [5文字以内]</th>
           <td>
-            <input type="text" name="" value="" maxlength="5">
+            <input type="text" name="lastname" value="" maxlength="5">
           </td>
         </tr>
         <tr>
           <th>名</th>
           <td>
-            <input type="text" name="" value="">
+            <input type="text" name="firstname" value="">
           </td>
         </tr>
         <tr>
           <th>現在のメールアドレス</th>
           <td>
-            taro@yokogawa.com
-            <input id="curemail" type="hidden" name="" value="taro@yokogawa.com">
+            taro@hoge.com
+            <input type="hidden" name="email1" value="taro@hoge.com" id="curmail">
           </td>
         </tr>
         <tr>
           <th>新しいメールアドレス</th>
           <td>
-            <input type="email" name="" value="" data-valli="{rule:{different:{partner:'#curemail'}}}">
+            <input type="email" name="email2" value="" data-valli='{"rule":{"different":{"partner":"#curmail"}}}'>
           </td>
         </tr>
         <tr>
           <th>新しいパスワード</th>
           <td>
-            <input id="newpw1" type="password" name="" value="" pattern="^\w+$" data-valli="{rule:{equal:{partner:'#newpw2'}}}">
+            <input type="password" name="pw1" value="" pattern="^\w+$" data-valli='{"rule":{"equal":{"partner":"#newpw2"}}}' id="newpw1">
           </td>
         </tr>
         <tr>
           <th>新しいパスワード（確認）</th>
           <td>
-            <input id="newpw2" type="password" name="" value="" pattern="^\w+$" data-valli="{rule:{equal:{partner:'#newpw1'}}}">
+            <input type="password" name="pw2" value="" pattern="^\w+$" data-valli='{"rule":{"equal":{"partner":"#newpw1"}}}' id="newpw2">
           </td>
         </tr>
         <tr>
           <th>日付</th>
           <td>
-            <input type="text" name="" value="" pattern="^\d{4}/\d{2}/\d{2}$">
+            <input type="text" name="date" value="" pattern="^\d{4}/\d{2}/\d{2}$">
           </td>
         </tr>
         <tr>
           <th>電話番号</th>
           <td>
-            <input type="tel" name="" value="">
+            <input type="tel" name="tel" value="">
           </td>
         </tr>
         <tr>
           <th>URL</th>
           <td>
-            <input type="url" name="" value="">
+            <input type="url" name="url" value="">
           </td>
         </tr>
         <tr>
           <th>日付範囲</th>
           <td>
-            <input id="date1" type="text" name="" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli="{rule:{within:{partner:'#date2',begin:true,equal:true}}}">
-            <input id="date2" type="text" name="" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli="{rule:{within:{partner:'#date1',equal:true}}}">
+            <input type="text" name="date1" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli='{"rule":{"within":{"partner":"#enddate","equal":true,"begin":true}}}' id="startdate">
+            <input type="text" name="date2" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli='{"rule":{"within":{"partner":"#startdate","equal":true}}}' id="enddate">
           </td>
         </tr>
       </tbody>
     </table>
     <div>
       <label>
-        <input type="checkbox" name="" value="" required>同意する
+        <input type="checkbox" name="agreement" value="1" required>同意する
       </label>
     </div>
     <button type="submit">次へ</button>

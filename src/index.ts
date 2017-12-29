@@ -6,7 +6,9 @@ export {
   NativeValidatorOptions,
   ValidityInfo,
   ValidityResult,
+  ItemConf,
   ItemOptions,
+  ValliConf,
 } from './types';
 
 declare var window: any;

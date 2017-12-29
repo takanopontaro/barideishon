@@ -1,30 +1,44 @@
-import { RuleClass, FormControl, ValidityInfo, ItemOptions } from './types';
+import {
+  RuleClass,
+  FormControl,
+  ValidityInfo,
+  ItemConf,
+  ItemOptions,
+  ValliConf,
+} from './types';
 
 import { RuleManager } from './rule-manager';
 import { Rule } from './rule';
 import { Item } from './item';
 
 export class Valli {
-  customDataName = 'data-valli';
-  events = ['change', 'input'];
-
   private items: Item[] = [];
 
   static addRule(ruleClass: RuleClass) {
     RuleManager.add(ruleClass);
   }
 
-  constructor(private form: HTMLFormElement, controls: FormControl[]) {
-    this.form.noValidate = true;
+  constructor({
+    form,
+    controls,
+    attrName = 'data-valli',
+    events = ['change', 'input', 'paste', 'cut', 'drop'],
+    wait = 100,
+  }: ValliConf) {
+    form.noValidate = true;
     controls.forEach(el => {
-      const options = this.getOptions(el);
-      const item = options ? new Item(el, options) : new Item(el);
+      const conf: ItemConf = { el, events, wait };
+      const options = this.getOptions(el, attrName);
+      const item = options ? new Item(conf, options) : new Item(conf);
       this.items.push(item);
     });
   }
 
-  private getOptions(el: FormControl): ItemOptions | undefined {
-    const data = el.getAttribute(this.customDataName);
+  private getOptions(
+    el: FormControl,
+    attrName: string
+  ): ItemOptions | undefined {
+    const data = el.getAttribute(attrName);
     if (data === null || !data.trim()) {
       return;
     }
@@ -35,13 +49,8 @@ export class Valli {
     }
   }
 
-  bind() {
-    this.items.forEach(item => item.bind(this.events));
-    return this;
-  }
-
-  unbind() {
-    this.items.forEach(item => item.unbind(this.events));
+  destroy() {
+    this.items.forEach(item => item.destroy());
     return this;
   }
 
