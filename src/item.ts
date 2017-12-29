@@ -10,7 +10,8 @@ import {
 import { getValue } from './toolbelt';
 import { RuleManager } from './rule-manager';
 import { Rule } from './rule';
-import { mapValues, debounce } from 'lodash-es';
+import mapValues from 'lodash-es/mapValues';
+import debounce from 'lodash-es/debounce';
 
 export class Item {
   el: FormControl;

@@ -1,6 +1,6 @@
 module.exports = {
   watch: true,
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
   entry: {
     'test/test.spec.bundle': './test/test.spec.ts',
   },
