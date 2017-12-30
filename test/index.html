@@ -4,90 +4,67 @@
 <head>
   <meta charset="utf-8">
   <title></title>
+  <link href="../node_modules/mocha/mocha.css" rel="stylesheet">
+  <style>
+    form {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
-  <form>
-    <table>
-      <tbody>
-        <tr>
-          <th>グループ名 [必須] [5文字以内]</th>
-          <td>
-            <input type="text" name="group" value="" required maxlength="5">
-          </td>
-        </tr>
-        <tr>
-          <th>姓 [5文字以内]</th>
-          <td>
-            <input type="text" name="lastname" value="" maxlength="5">
-          </td>
-        </tr>
-        <tr>
-          <th>名</th>
-          <td>
-            <input type="text" name="firstname" value="">
-          </td>
-        </tr>
-        <tr>
-          <th>現在のメールアドレス</th>
-          <td>
-            taro@hoge.com
-            <input type="hidden" name="email1" value="taro@hoge.com" id="curmail">
-          </td>
-        </tr>
-        <tr>
-          <th>新しいメールアドレス</th>
-          <td>
-            <input type="email" name="email2" value="" data-valli='{"rule":{"different":{"partner":"#curmail"}}}'>
-          </td>
-        </tr>
-        <tr>
-          <th>新しいパスワード</th>
-          <td>
-            <input type="password" name="pw1" value="" pattern="^\w+$" data-valli='{"rule":{"equal":{"partner":"#newpw2"}}}' id="newpw1">
-          </td>
-        </tr>
-        <tr>
-          <th>新しいパスワード（確認）</th>
-          <td>
-            <input type="password" name="pw2" value="" pattern="^\w+$" data-valli='{"rule":{"equal":{"partner":"#newpw1"}}}' id="newpw2">
-          </td>
-        </tr>
-        <tr>
-          <th>日付</th>
-          <td>
-            <input type="text" name="date" value="" pattern="^\d{4}/\d{2}/\d{2}$">
-          </td>
-        </tr>
-        <tr>
-          <th>電話番号</th>
-          <td>
-            <input type="tel" name="tel" value="">
-          </td>
-        </tr>
-        <tr>
-          <th>URL</th>
-          <td>
-            <input type="url" name="url" value="">
-          </td>
-        </tr>
-        <tr>
-          <th>日付範囲</th>
-          <td>
-            <input type="text" name="date1" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli='{"rule":{"within":{"partner":"#enddate","equal":true,"begin":true}}}' id="startdate">
-            <input type="text" name="date2" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli='{"rule":{"within":{"partner":"#startdate","equal":true}}}' id="enddate">
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div>
-      <label>
-        <input type="checkbox" name="agreement" value="1" required>同意する
-      </label>
-    </div>
-    <button type="submit">次へ</button>
+  <div id="mocha"></div>
+
+  <form id="native-form">
+    <fieldset>
+      <legend>Native</legend>
+      Required:
+      <input type="text" name="required" value="" required id="native-1">
+      <br>
+      <input type="checkbox" name="agreement" value="" required id="native-2">Agree
+    </fieldset>
   </form>
-  <script src="test.spec.bundle.js"></script>
+
+  <form id="custom-form">
+    <fieldset>
+      <legend>Custom Rule</legend>
+      New Password:
+      <input type="password" name="pw1" value="" data-valli='{"equal":{"partner":"#custom-equal-2"}}' id="custom-equal-1">
+      <br>New Password (confirm):
+      <input type="password" name="pw2" value="" data-valli='{"equal":{"partner":"#custom-equal-1"}}' id="custom-equal-2">
+      <br>Current email: valli@example.com
+      <input type="hidden" name="mail1" value="" id="custom-different-1">
+      <br>New email:
+      <input type="email" name="mail2" value="" data-valli='{"different":{"partner":"#custom-different-1"}}' id="custom-different-2">
+      <br>Range of dates:
+      <input type="text" name="date1" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli='{"within":{"partner":"#custom-within-2","equal":true,"begin":true}}'
+        id="custom-within-1"> -
+      <input type="text" name="date2" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli='{"within":{"partner":"#custom-within-1","equal":true}}'
+        id="custom-within-2">
+    </fieldset>
+  </form>
+
+  <form id="api-form">
+    <fieldset>
+      <legend>API</legend>
+      New Password:
+      <input type="password" name="pw1" value="" data-custom-valli='{"equal":{"partner":"#api-equal-2","foo":"bar"}}' id="api-equal-1">
+      <br>New Password (confirm):
+      <input type="password" name="pw2" value="" data-custom-valli='{"equal":{"partner":"#api-equal-1"}}' id="api-equal-2">
+      <br>
+      <input type="text" name="apiwait" value="" id="api-wait">
+      <br>
+      <input type="email" name="apinative" value="" required id="api-native" data-custom-valli='{"native":{"type":false}}'>
+    </fieldset>
+  </form>
+
+  <script src="../node_modules/mocha/mocha.js"></script>
+  <script src="../node_modules/chai/chai.js"></script>
+  <script>mocha.setup('bdd');</script>
+  <script src="test.spec.js"></script>
+  <script>
+    mocha.run();
+  </script>
 </body>
 
 </html>

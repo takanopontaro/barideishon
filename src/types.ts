@@ -19,17 +19,20 @@ export interface NativeValidatorOptions {
 }
 
 export interface ValidityInfo {
+  el: FormControl;
   type: string;
   value: string | undefined;
   prev: string | undefined;
   valid: boolean;
   native: ValidityState;
-  custom: ValidityResult[];
+  custom: {
+    [key: string]: ValidityResult;
+  };
 }
 
 export interface ValidityResult {
-  name: string;
   valid: boolean;
+  [key: string]: any;
 }
 
 export interface ItemConf {
@@ -40,7 +43,6 @@ export interface ItemConf {
 
 export interface ItemOptions {
   native?: boolean | Partial<NativeValidatorOptions>;
-  rule?: any;
   [key: string]: any;
 }
 

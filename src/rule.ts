@@ -1,11 +1,22 @@
-import { FormControl } from './types';
+import { FormControl, ValidityResult } from './types';
+
+export interface Options {
+  [key: string]: any;
+}
 
 export class Rule {
   name: string;
 
-  constructor(protected el: FormControl) {}
+  protected result: ValidityResult;
 
-  validate() {
-    return false;
+  constructor(protected el: FormControl, options: Options) {
+    this.result = {
+      valid: false,
+      ...options,
+    };
+  }
+
+  validate(): ValidityResult {
+    return this.result;
   }
 }

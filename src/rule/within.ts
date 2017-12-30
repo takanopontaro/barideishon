@@ -1,27 +1,28 @@
 import { getValue } from '../toolbelt';
-import { FormControl } from '../types';
+import { FormControl, ValidityResult } from '../types';
 import { Rule } from '../rule';
 
 export interface Options {
   partner: string;
   begin?: boolean;
   equal?: boolean;
+  [key: string]: any;
 }
 
 export class Within extends Rule {
   name = 'within';
 
-  private partner: FormControl;
-  private begin: FormControl;
-  private end: FormControl;
-  private equal: boolean;
+  private beginEl: FormControl;
+  private endEl: FormControl;
+  private incEqual: boolean;
 
   constructor(el: FormControl, options: Options) {
-    super(el);
-    this.partner = <FormControl>document.querySelector(options.partner);
-    this.begin = options.begin ? this.el : this.partner;
-    this.end = options.begin ? this.partner : this.el;
-    this.equal = !!options.equal;
+    super(el, options);
+    const { partner, begin, equal } = options;
+    const partnerEl = <FormControl>document.querySelector(partner);
+    this.beginEl = begin ? this.el : partnerEl;
+    this.endEl = begin ? partnerEl : this.el;
+    this.incEqual = !!equal;
   }
 
   private mismatch(el: FormControl) {
@@ -36,18 +37,20 @@ export class Within extends Rule {
   }
 
   validate() {
-    const begin = getValue(this.begin);
-    const end = getValue(this.end);
+    const begin = getValue(this.beginEl);
+    const end = getValue(this.endEl);
     if (
       !begin ||
       !end ||
-      this.mismatch(this.begin) ||
-      this.mismatch(this.end)
+      this.mismatch(this.beginEl) ||
+      this.mismatch(this.endEl)
     ) {
-      return false;
+      this.result.valid = false;
+    } else {
+      const b = new Date(begin);
+      const e = new Date(end);
+      this.result.valid = this.incEqual ? e >= b : e > b;
     }
-    const b = new Date(begin);
-    const e = new Date(end);
-    return this.equal ? e >= b : e > b;
+    return this.result;
   }
 }
