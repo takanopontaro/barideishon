@@ -27,6 +27,7 @@
   "main": "lib/index.js",
   "repository": "https://github.com/takanopontaro/valli",
   "scripts": {
+    "all": "npm start && npm run bundle && npm run test",
     "bundle": "webpack --config bundle/webpack.config.js",
     "start": "fixpack && del-cli lib && tsc",
     "test": "webpack --config test/webpack.config.js"
