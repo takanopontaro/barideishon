@@ -42,3 +42,50 @@ typeMismatch
 valid
 valueMissing
 
+
+
+
+HTML5を利用した控えめなバリデータ。
+
+HTML
+<form id="myform">
+  <label>New Password: <input type="password" data-valli='{"equal":{"partner":"#pw2","errid":"#err"}}' id="pw1" required></label><br>
+  <label>(Confirmation): <input type="password" data-valli='{"equal":{"partner":"#pw1","errid":"#err"}}' id="pw2" required></label>
+  <div id="err"></div>
+  <input type="submit" id="btn">
+</form>
+
+JS
+const btn = document.querySelector('#btn');
+const form = document.querySelector('#myform');
+const controls = Array.from(document.querySelectorAll('#myform input'));
+const valli = new Valli({ form, controls });
+
+function callback(ev) {
+  const { el, valid, custom: { equal } } = ev.detail;
+  const err = document.querySelector(equal.errid);
+  if (!valid) {
+    err.innerHTML = equal.valid ? '' : 'two inputs must be equal';
+    el.style.border = '1px solid red';
+  } else {
+    err.innerHTML = '';
+    el.style.border = '';
+  }
+  setBtnState();
+}
+
+function setBtnState() {
+  btn.disabled = valli.validate(true).every(info => info.valid) === false;
+}
+
+form.addEventListener('valli', callback, false);
+
+
+ビルドイン・バリデータ
+Equal
+Different
+Within
+
+
+
+
