@@ -65,7 +65,7 @@ const valli = new Valli({ form, controls });
 
 function callback(ev) {
   const { el, valid } = ev.detail;
-  el.style.border = valid ? '' : '1px solid red';
+  el.style.background = valid ? '' : '#fcc';
   setBtnState();
 }
 
@@ -75,6 +75,7 @@ function setBtnState() {
 
 form.addEventListener('valli', callback, false);
 
+https://jsbin.com/konidi/edit?html,js,output
 
 ビルドイン・バリデータ
 Equal
