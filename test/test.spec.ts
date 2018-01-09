@@ -165,8 +165,8 @@ describe('API', () => {
         valli.destroy();
         $el.off('valli');
         const info: ValidityInfo = (<CustomEvent>originalEvent).detail;
-        chai.assert.equal(info.native.typeMismatch, true);
-        chai.assert.equal(info.native.valueMissing, false);
+        chai.assert.equal(info.el.validity.typeMismatch, true);
+        chai.assert.equal(info.el.validity.valueMissing, false);
         chai.assert.equal(info.valid, true);
         done();
       });

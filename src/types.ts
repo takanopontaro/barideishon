@@ -24,7 +24,6 @@ export interface ValidityInfo {
   value: string | undefined;
   prev: string | undefined;
   valid: boolean;
-  native: ValidityState;
   custom: {
     [key: string]: ValidityResult;
   };

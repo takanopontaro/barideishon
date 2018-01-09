@@ -58,6 +58,10 @@ export class Valli {
     return this.items.find(item => item.el === el);
   }
 
+  get valid() {
+    return this.validate(true).every(info => info.valid);
+  }
+
   validate(dryRun = false) {
     return this.items.map(item => item.validate(dryRun));
   }

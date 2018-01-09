@@ -109,7 +109,6 @@ export class Item {
       value: getValue(this.el),
       prev: this.value,
       valid: false,
-      native: this.el.validity,
       custom: this.rules.reduce(
         (acc, rule) => {
           acc[rule.name] = rule.validate();
