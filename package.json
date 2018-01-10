@@ -1,6 +1,6 @@
 {
   "name": "valli",
-  "description": "An unobtrusive validator library with the help of HTML5",
+  "description": "An unobtrusive event-driven validator with the help of HTML5",
   "version": "1.0.0",
   "author": "takanopontaro",
   "dependencies": {
@@ -23,6 +23,7 @@
   "files": [
     "lib"
   ],
+  "homepage": "https://takanopontaro.github.io/valli/",
   "license": "MIT",
   "main": "lib/index.js",
   "repository": "https://github.com/takanopontaro/valli",
