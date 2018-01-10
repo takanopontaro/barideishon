@@ -44,9 +44,9 @@ form.addEventListener('valli', ev => {
 
 
 ### class: Valli
+Main class for this module.
+The following is a typical example of using a Valli.
 
-Puppeteer module provides a method to launch a Chromium instance.
-The following is a typical example of using a Puppeteer to drive automation:
 ```js
 import { Valli } from 'Valli';
 
