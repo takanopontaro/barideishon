@@ -12,7 +12,6 @@ Thumbs.db
 node_modules
 /tmp
 /dist
-/doc
 *.map
 /test/*.js
 /bundle/*.js

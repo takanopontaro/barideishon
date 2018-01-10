@@ -1,13 +1,11 @@
 export { Valli } from './main';
+export { Rule } from './rule';
 
 export {
   RuleClass,
   FormControl,
-  NativeValidatorOptions,
   ValidityInfo,
   ValidityResult,
-  ItemConf,
-  ItemOptions,
   ValliConf,
 } from './types';
 
