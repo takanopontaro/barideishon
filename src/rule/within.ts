@@ -4,7 +4,7 @@ import { Rule } from '../rule';
 
 export interface Options {
   partner: string;
-  begin?: boolean;
+  start?: boolean;
   equal?: boolean;
   [key: string]: any;
 }
@@ -12,16 +12,16 @@ export interface Options {
 export class Within extends Rule {
   name = 'within';
 
-  private beginEl: FormControl;
+  private startEl: FormControl;
   private endEl: FormControl;
   private incEqual: boolean;
 
   constructor(el: FormControl, options: Options) {
     super(el, options);
-    const { partner, begin, equal } = options;
+    const { partner, start, equal } = options;
     const partnerEl = <FormControl>document.querySelector(partner);
-    this.beginEl = begin ? this.el : partnerEl;
-    this.endEl = begin ? partnerEl : this.el;
+    this.startEl = start ? this.el : partnerEl;
+    this.endEl = start ? partnerEl : this.el;
     this.incEqual = !!equal;
   }
 
@@ -37,17 +37,17 @@ export class Within extends Rule {
   }
 
   validate() {
-    const begin = getValue(this.beginEl);
+    const start = getValue(this.startEl);
     const end = getValue(this.endEl);
     if (
-      !begin ||
+      !start ||
       !end ||
-      this.mismatch(this.beginEl) ||
+      this.mismatch(this.startEl) ||
       this.mismatch(this.endEl)
     ) {
       this.result.valid = false;
     } else {
-      const b = new Date(begin);
+      const b = new Date(start);
       const e = new Date(end);
       this.result.valid = this.incEqual ? e >= b : e > b;
     }

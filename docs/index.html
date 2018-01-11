@@ -1,4 +1,49 @@
-<body>
-  <h1>Valli</h1>
-  <script src="./valli-1.0.0.min.js"></script>
-</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Valli</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+  </head>
+  <body>
+    <h1>Valli</h1>
+    <form>
+      <fieldset>
+        <legend>Native Validator:</legend>
+        <div class="errorMsg"></div>
+        <label>Required: <input type="text" required></label>
+        <div class="errorMsg"></div>
+        <label>2 <= length <= 5: <input type="text" minlength="2" maxlength="5" required></label>
+        <div class="errorMsg"></div>
+        <label>YYYY-MM-DD: <input type="text" pattern="^\d{4}-\d{2}-\d{2}$" required></label>
+        <div class="errorMsg"></div>
+        <label>Email: <input type="email" required></label>
+        <div class="errorMsg"></div>
+        <label><input type="range" min="0" max="100" step="10" required onchange="printValue(this,'#rangeValue')"><input type="text" size="3" id="rangeValue"></label>
+      </fieldset>
+      <fieldset>
+        <legend>Equal:</legend>
+        <div class="errorMsg" id="errEqual"></div>
+        <label>Input: <input type="text" id="input" data-valli='{"equal":{"partner":"#confirmation","err":"#errEqual"}}'></label>
+        <label>Confirmation: <input type="text" id="confirmation" data-valli='{"equal":{"partner":"#input","err":"#errEqual"}}'></label>
+      </fieldset>
+      <fieldset>
+        <legend>Different:</legend>
+        <div class="errorMsg" id="errDifferent"></div>
+        <label>Current: <input type="text" id="current" data-valli='{"different":{"partner":"#new","err":"#errDifferent"}}'></label>
+        <label>New: <input type="text" id="new" data-valli='{"different":{"partner":"#current","err":"#errDifferent"}}'></label>
+      </fieldset>
+      <fieldset>
+        <legend>Within:</legend>
+        <div class="errorMsg" id="errWithin"></div>
+        <label>From: <input type="text" id="from" pattern="^\d{4}-\d{2}-\d{2}$" data-valli='{"within":{"partner":"#to","start":true,"equal":true,"err":"#errWithin"}}'></label>
+        <label>To: <input type="text" id="top" pattern="^\d{4}-\d{2}-\d{2}$" data-valli='{"within":{"partner":"#from","start":false,"equal":true,"err":"#errWithin"}}'></label>
+      </fieldset>
+      <button type="submit">Submit</button>
+    </form>
+    <script src="./valli-1.0.0.min.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

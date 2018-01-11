@@ -175,36 +175,36 @@ The following is a example of result of validation above.
 ### Builtin Validator
 
 #### Equal
-Puppeteer module provides a method to launch a Chromium instance.
+Validate whether values of two elements are same or not.
 
 ```html
 Input: <input type="text" id="input" data-valli='{"equal":{"partner":"#confirmation"}}'>
 Confirmation: <input type="text" id="confirmation" data-valli='{"equal":{"partner":"#input"}}'>
 ```
 
-- `partner` <[string]> A [selector] to query page for. Defaults to `false`.
+- `partner` <[string]> An id of its partner element.
 
 #### Different
-Puppeteer module provides a method to launch a Chromium instance.
+Validate whether values of two elements are different or not.
 
 ```html
 Current: <input type="text" id="current" data-valli='{"different":{"partner":"#new"}}'>
 New: <input type="text" id="new" data-valli='{"different":{"partner":"#current"}}'>
 ```
 
-- `partner` <[string]> A [selector] to query page for. Defaults to `false`.
+- `partner` <[string]> An id of its partner element.
 
 #### Within
-Puppeteer module provides a method to launch a Chromium instance.
+Validate whether values of two elements expressed as date are consistent or not. Must be defined a pattern attribute at a time.
 
 ```html
-From: <input type="text" id="from" pattern="^\d{4}-\d{2}-\d{2}$" data-valli='{"within":{"partner":"#to","begin":true,"equal":true}}'>
-To: <input type="text" id="top" pattern="^\d{4}-\d{2}-\d{2}$" data-valli='{"within":{"partner":"#from","begin":false,"equal":true}}'>
+From: <input type="text" id="from" pattern="^\d{4}-\d{2}-\d{2}$" data-valli='{"within":{"partner":"#to","start":true,"equal":true}}'>
+To: <input type="text" id="top" pattern="^\d{4}-\d{2}-\d{2}$" data-valli='{"within":{"partner":"#from","start":false,"equal":true}}'>
 ```
 
-- `partner` <[string]> A [selector] to query page for. Defaults to `false`.
-- `begin` <[boolean]> A [selector] to query page for. Defaults to `false`.
-- `equal` <[boolean]> A [selector] to query page for. Defaults to `false`.
+- `partner` <[string]> An id of its partner element.
+- `start` <[boolean]> Whether it's start date or not. Defaults to `false`.
+- `equal` <[boolean]> Whether it allows to be equal start date and end date. Defaults to `false`.
 
 ### Custom Validator
 Not implemented yet.
