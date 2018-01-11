@@ -9,7 +9,7 @@ yarn add valli
 # or "npm i valli"
 ```
 
-You can get [this](https://github.com/takanopontaro/valli/archive/1.0.0.zip) for global installation.
+You can get it for global installation [here](https://github.com/takanopontaro/valli/archive/1.0.0.zip).
 
 ## Usage
 
@@ -45,7 +45,7 @@ form.addEventListener('valli', ev => {
 
 ### class: Valli
 Main class for this module.
-The following is a typical example of using a Valli.
+The following is a simple example of using a Valli.
 
 ```js
 import { Valli } from 'Valli';
@@ -61,40 +61,37 @@ button.addEventListener('click', () => console.log(valli.valid), false);
 
 #### constructor(options)
 - `options` <[Object]>
-  - `form` <[HTMLElement]> a [browser websocket endpoint](#browserwsendpoint) to connect to.
-  - `controls` <[Array]<[HTMLElement]>> Whether to ignore HTTPS errors during navigation. Defaults to `false`.
-  - `attrName` <[string]> Whether to ignore HTTPS errors during navigation. Defaults to `data-valli`.
-  - `events` <[Array]<[string]>> Whether to ignore HTTPS errors during navigation. Defaults to `['change', 'input', 'paste', 'cut', 'drop']`.
-  - `wait` <[number]> Whether to ignore HTTPS errors during navigation. Defaults to `100`.
+  - `form` <[HTMLElement]> a <form> element.
+  - `controls` <[Array]<[HTMLElement]>> Array of form elements that are <input>, <textarea> or <select>.
+  - `attrName` <[string]> A custom data attribute name for Valli. Defaults to `data-valli`.
+  - `events` <[Array]<[string]>> A list of events for observing user inputs. Defaults to `['change', 'input', 'paste', 'cut', 'drop']`.
+  - `wait` <[number]> A wait for debounce of validation. Defaults to `100`.
 - returns: <[Valli]>
 
-This methods attaches Puppeteer to an existing Chromium instance.
-
 #### valli.destroy()
-
-This methods attaches Puppeteer to an existing Chromium instance.
+Destroys a valli and remove event listeners.
 
 #### valli.getItem(element)
-- `element` <[HTMLElement]> A [selector] to query page for
+- `element` <[HTMLElement]> A form element that is <input>, <textarea> or <select>.
 - returns: <[Item]>
 
-This methods attaches Puppeteer to an existing Chromium instance.
+Gets an valli item object.
 
 #### valli.valid
 - returns: <[boolean]>
 
-This methods attaches Puppeteer to an existing Chromium instance.
+Whether all elements inside a form are valid or not.
 
 #### valli.validate(dryRun)
-- `dryRun` <[boolean]> A [selector] to query page for. Defaults to `false`.
+- `dryRun` <[boolean]> Only validation not dispatch an event. Defaults to `false`.
 - returns: <[Array]<[ValidityInfo]>>
 
-This methods attaches Puppeteer to an existing Chromium instance.
+Gets results of validation of all form elements.
 
 ### class: Item
+A class for a single form element.
+For use in validation one by one.
 
-Puppeteer module provides a method to launch a Chromium instance.
-The following is a typical example of using a Puppeteer to drive automation:
 ```js
 const element = document.querySelector('input');
 const item = valli.getItem(element);
@@ -105,8 +102,9 @@ item.validate();
 #### event: 'valli'
 - <[CustomEvent]>
 
-Emitted when the url of a target changes.
+When a user input occurs, this event will be dispatched with one argument of <CustomEvent>.
 https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
+`CustomEvent.detail` is <ValidityInfo> for that element.
 
 ```js
 const element = document.querySelector('input');
@@ -117,8 +115,8 @@ element.addEventListener('valli', ev => {
 }, false);
 ```
 
-Emitted when the url of a target changes.
-https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
+This event bubbles up so you can listen it on one place, a form itself.
+The following is a typical example. This is a recommended usage of this module.
 
 ```js
 const form = document.querySelector('form');
@@ -131,43 +129,35 @@ form.addEventListener('valli', ev => {
 ```
 
 #### item.el
-- returns: <[HTMLElement]>
-
-This methods attaches Puppeteer to an existing Chromium instance.
+- returns: <[HTMLElement]> A related form element.
 
 #### item.validate(dryRun, type)
-- `dryRun` <[boolean]> A [selector] to query page for. Defaults to `false`.
-- `type` <[string]> A [selector] to query page for. Defaults to ``.
+- `dryRun` <[boolean]> Only validation not dispatch an event. Defaults to `false`.
+- `type` <[string]> Event type. Passes to <ValidityInfo>. Defaults to ``.
 - returns: <[ValidityInfo]>
 
-This methods attaches Puppeteer to an existing Chromium instance.
-
 ### type: ValidityInfo
+A result of validation.
 
-Puppeteer module provides a method to launch a Chromium instance.
-The following is a typical example of using a Puppeteer to drive automation:
-
-- `el` <[HTMLElement]> A [selector] to query page for. Defaults to `false`.
-- `type` <[string]> A [selector] to query page for. Defaults to ``.
-- `value` <[string]|[undefined]> A [selector] to query page for. Defaults to ``.
-- `prev` <[string]|[undefined]> A [selector] to query page for. Defaults to ``.
-- `valid` <[boolean]> A [selector] to query page for. Defaults to ``.
-- `custom` <[Object]> A [selector] to query page for. Defaults to ``.
-  - `[rule name]` <[ValidityResult]> Whether to ignore HTTPS errors during navigation. Defaults to `false`.
+- `el` <[HTMLElement]> A related form element.
+- `type` <[string]> Event type. Possibly an empty string if a validate method is invoked programmatically.
+- `value` <[string]|[undefined]> A current value.
+- `prev` <[string]|[undefined]> A previous value.
+- `valid` <[boolean]> Whether that element is valid or not.
+- `custom` <[Object]> Results of custom validators.
+  - `[rule name]` <[ValidityResult]> Key is a name of a custom validator and value is that result.
 
 ### type: ValidityResult
+A result of a custom validator.
 
-Puppeteer module provides a method to launch a Chromium instance.
-The following is a typical example of using a Puppeteer to drive automation:
-
-- `valid` <[boolean]> A [selector] to query page for. Defaults to `false`.
-- `...extra` <[any]> A [selector] to query page for. Defaults to ``.
+- `valid` <[boolean]> Whether that element is valid or not.
+- `...extra` <[any]> Key-value pairs difined in json of `data-valli`.
 
 ```html
 <input type="text" data-valli='{"equal":{"partner":"#el","foo":7,"bar":"wow"}}'>
 ```
 
-The following is a typical example of using a Puppeteer to drive automation:
+The following is a example of result of validation above.
 
 ```js
 {
@@ -184,10 +174,7 @@ The following is a typical example of using a Puppeteer to drive automation:
 
 ### Builtin Validator
 
-Puppeteer module provides a method to launch a Chromium instance.
-
 #### Equal
-
 Puppeteer module provides a method to launch a Chromium instance.
 
 ```html
@@ -198,7 +185,6 @@ Confirmation: <input type="text" id="confirmation" data-valli='{"equal":{"partne
 - `partner` <[string]> A [selector] to query page for. Defaults to `false`.
 
 #### Different
-
 Puppeteer module provides a method to launch a Chromium instance.
 
 ```html
@@ -209,7 +195,6 @@ New: <input type="text" id="new" data-valli='{"different":{"partner":"#current"}
 - `partner` <[string]> A [selector] to query page for. Defaults to `false`.
 
 #### Within
-
 Puppeteer module provides a method to launch a Chromium instance.
 
 ```html
@@ -222,5 +207,4 @@ To: <input type="text" id="top" pattern="^\d{4}-\d{2}-\d{2}$" data-valli='{"with
 - `equal` <[boolean]> A [selector] to query page for. Defaults to `false`.
 
 ### Custom Validator
-
-Puppeteer module provides a method to launch a Chromium instance.
+Not implemented yet.
