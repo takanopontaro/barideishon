@@ -24,6 +24,7 @@ export interface ValidityInfo {
   value: string | undefined;
   prev: string | undefined;
   valid: boolean;
+  params: { [key: string]: any };
   custom: {
     [key: string]: ValidityResult;
   };

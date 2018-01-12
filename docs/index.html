@@ -2,26 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Valli</title>
+    <title>Valli Demo</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="stylesheet" type="text/css" href="./style.css">
   </head>
   <body>
-    <h1>Valli</h1>
-    <form>
+    <h1>Valli Demo</h1>
+    <form onsubmit="alert('Congrats!')">
       <fieldset>
         <legend>Native Validator:</legend>
-        <div class="errorMsg"></div>
-        <label>Required: <input type="text" required></label>
-        <div class="errorMsg"></div>
-        <label>2 <= length <= 5: <input type="text" minlength="2" maxlength="5" required></label>
-        <div class="errorMsg"></div>
-        <label>YYYY-MM-DD: <input type="text" pattern="^\d{4}-\d{2}-\d{2}$" required></label>
-        <div class="errorMsg"></div>
-        <label>Email: <input type="email" required></label>
-        <div class="errorMsg"></div>
-        <label><input type="range" min="0" max="100" step="10" required onchange="printValue(this,'#rangeValue')"><input type="text" size="3" id="rangeValue"></label>
+        <div class="errorMsg" id="errorRequired"></div>
+        <label>Required: <input type="text" required data-valli='{"err":"#errorRequired"}'></label>
+        <div class="errorMsg" id="errorLength"></div>
+        <label>2 <= length <= 5: <input type="text" minlength="2" maxlength="5" required data-valli='{"err":"#errorLength"}'></label>
+        <div class="errorMsg" id="errorPattern"></div>
+        <label>YYYY-MM-DD: <input type="text" pattern="^\d{4}-\d{2}-\d{2}$" required data-valli='{"err":"#errorPattern"}'></label>
+        <div class="errorMsg" id="errorType"></div>
+        <label>Email: <input type="email" required data-valli='{"err":"#errorType"}'></label>
       </fieldset>
       <fieldset>
         <legend>Equal:</legend>
@@ -39,7 +37,7 @@
         <legend>Within:</legend>
         <div class="errorMsg" id="errWithin"></div>
         <label>From: <input type="text" id="from" pattern="^\d{4}-\d{2}-\d{2}$" data-valli='{"within":{"partner":"#to","start":true,"equal":true,"err":"#errWithin"}}'></label>
-        <label>To: <input type="text" id="top" pattern="^\d{4}-\d{2}-\d{2}$" data-valli='{"within":{"partner":"#from","start":false,"equal":true,"err":"#errWithin"}}'></label>
+        <label>To: <input type="text" id="to" pattern="^\d{4}-\d{2}-\d{2}$" data-valli='{"within":{"partner":"#from","start":false,"equal":true,"err":"#errWithin"}}'></label>
       </fieldset>
       <button type="submit">Submit</button>
     </form>

@@ -144,6 +144,7 @@ A result of validation.
 - `value` <[string]|[undefined]> A current value.
 - `prev` <[string]|[undefined]> A previous value.
 - `valid` <[boolean]> Whether that element is valid or not.
+- `params` <[any]> Key-value pairs difined in json of `data-valli`.
 - `custom` <[Object]> Results of custom validators.
   - `[rule name]` <[ValidityResult]> Key is a name of a custom validator and value is that result.
 

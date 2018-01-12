@@ -31,6 +31,7 @@ export class Item {
 
   private value: string | undefined;
   private rules: Rule[] = [];
+  private params: { [key: string]: any } = {};
 
   constructor({ el, events, wait }: ItemConf, options?: ItemOptions) {
     this.el = el;
@@ -49,6 +50,10 @@ export class Item {
         return;
       }
       const ruleClass = RuleManager.get(key);
+      if (!ruleClass) {
+        this.params[key] = options[key];
+        return;
+      }
       this.rules.push(new ruleClass(el, options[key]));
     });
   }
@@ -109,13 +114,11 @@ export class Item {
       value: getValue(this.el),
       prev: this.value,
       valid: false,
-      custom: this.rules.reduce(
-        (acc, rule) => {
-          acc[rule.name] = rule.validate();
-          return acc;
-        },
-        <any>{}
-      ),
+      params: this.params,
+      custom: this.rules.reduce((acc: any, rule) => {
+        acc[rule.name] = rule.validate();
+        return acc;
+      }, {}),
     };
     info.valid = this.nativeValidity && every(info.custom, 'valid');
     this.value = info.value;
