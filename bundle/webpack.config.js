@@ -1,9 +1,8 @@
-const { version } = require('../package.json');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: {
-    [`bundle/valli-${version}.min`]: './bundle/index.ts',
+    'umd/valli.min': './bundle/index.ts',
   },
   module: {
     rules: [

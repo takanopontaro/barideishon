@@ -1,7 +1,7 @@
 {
   "name": "valli",
   "description": "An unobtrusive event-driven validator with the help of HTML5",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "takanopontaro",
   "dependencies": {
     "lodash-es": "^4.17.4"
@@ -21,15 +21,20 @@
     "webpack": "^3.8.1"
   },
   "files": [
-    "lib"
+    "lib",
+    "umd"
   ],
-  "homepage": "https://takanopontaro.github.io/valli/",
+  "keywords": [
+    "HTML5",
+    "form",
+    "validator"
+  ],
   "license": "MIT",
   "main": "lib/index.js",
   "repository": "https://github.com/takanopontaro/valli",
   "scripts": {
     "all": "npm start && npm run bundle && npm run test",
-    "bundle": "webpack --config bundle/webpack.config.js",
+    "bundle": "del-cli umd && webpack --config bundle/webpack.config.js",
     "start": "fixpack && del-cli lib && tsc",
     "test": "webpack --config test/webpack.config.js"
   },
