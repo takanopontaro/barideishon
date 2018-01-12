@@ -1,3 +1,11 @@
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+html {
+  box-sizing: border-box;
+}
 body {
   margin: 20px;
   font-family: sans-serif;
@@ -6,7 +14,7 @@ body {
 }
 fieldset {
   margin: 20px 0;
-  padding: 0 10px;
+  padding: 0 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -27,6 +35,22 @@ textarea {
   border: 1px solid #ccc;
   border-radius: 3px;
 }
+input::-ms-clear {
+  visibility: hidden;
+}
+input::-ms-reveal {
+  visibility: hidden;
+}
+::-webkit-input-placeholder {
+  color: #ccc;
+}
+::-moz-placeholder {
+  color: #ccc;
+  opacity: 1;
+}
+:-ms-input-placeholder {
+  color: #ccc;
+}
 .error {
   border-color: #a66;
   background-color: #fcc;
@@ -37,7 +61,7 @@ textarea {
   font-weight: bold;
 }
 button {
-  margin: 0 5px;
+  margin: 0;
   padding: 3px 15px;
   -webkit-appearance: none;
   -moz-appearance: none;
