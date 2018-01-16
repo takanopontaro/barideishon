@@ -14,6 +14,8 @@ import { Item } from './item';
 export class Valli {
   private items: Item[] = [];
 
+  static Rule = Rule;
+
   static addRule(ruleClass: RuleClass) {
     RuleManager.add(ruleClass);
   }
