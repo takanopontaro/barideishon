@@ -25,22 +25,30 @@
     </fieldset>
   </form>
 
+  <form id="builtin-form">
+    <fieldset>
+      <legend>Builtin Rule</legend>
+      New Password:
+      <input type="password" name="pw1" value="" data-valli='{"equal":{"partner":"#builtin-equal-2"}}' id="builtin-equal-1">
+      <br>New Password (confirm):
+      <input type="password" name="pw2" value="" data-valli='{"equal":{"partner":"#builtin-equal-1"}}' id="builtin-equal-2">
+      <br>Current email: valli@example.com
+      <input type="hidden" name="mail1" value="" id="builtin-different-1">
+      <br>New email:
+      <input type="email" name="mail2" value="" data-valli='{"different":{"partner":"#builtin-different-1"}}' id="builtin-different-2">
+      <br>Range of dates:
+      <input type="text" name="date1" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli='{"within":{"partner":"#builtin-within-2","equal":true,"start":true}}'
+        id="builtin-within-1"> -
+      <input type="text" name="date2" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli='{"within":{"partner":"#builtin-within-1","equal":true}}'
+        id="builtin-within-2">
+    </fieldset>
+  </form>
+
   <form id="custom-form">
     <fieldset>
       <legend>Custom Rule</legend>
-      New Password:
-      <input type="password" name="pw1" value="" data-valli='{"equal":{"partner":"#custom-equal-2"}}' id="custom-equal-1">
-      <br>New Password (confirm):
-      <input type="password" name="pw2" value="" data-valli='{"equal":{"partner":"#custom-equal-1"}}' id="custom-equal-2">
-      <br>Current email: valli@example.com
-      <input type="hidden" name="mail1" value="" id="custom-different-1">
-      <br>New email:
-      <input type="email" name="mail2" value="" data-valli='{"different":{"partner":"#custom-different-1"}}' id="custom-different-2">
-      <br>Range of dates:
-      <input type="text" name="date1" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli='{"within":{"partner":"#custom-within-2","equal":true,"start":true}}'
-        id="custom-within-1"> -
-      <input type="text" name="date2" value="" pattern="^\d{4}/\d{2}/\d{2}$" data-valli='{"within":{"partner":"#custom-within-1","equal":true}}'
-        id="custom-within-2">
+      Match:
+      <input type="text" name="match" value="" data-valli='{"match":{"text":"valli"}}' id="custom-match">
     </fieldset>
   </form>
 

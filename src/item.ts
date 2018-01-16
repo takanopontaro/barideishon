@@ -14,6 +14,11 @@ import mapValues from 'lodash-es/mapValues';
 import debounce from 'lodash-es/debounce';
 import every from 'lodash-es/every';
 
+export interface RuleMap {
+  name: string;
+  rule: Rule;
+}
+
 export class Item {
   el: FormControl;
   destroy: () => void;
@@ -30,7 +35,7 @@ export class Item {
   };
 
   private value: string | undefined;
-  private rules: Rule[] = [];
+  private rules: RuleMap[] = [];
   private params: { [key: string]: any } = {};
 
   constructor({ el, events, wait }: ItemConf, options?: ItemOptions) {
@@ -54,7 +59,7 @@ export class Item {
         this.params[key] = options[key];
         return;
       }
-      this.rules.push(new ruleClass(el, options[key]));
+      this.rules.push({ name: key, rule: new ruleClass(el, options[key]) });
     });
   }
 
@@ -115,8 +120,8 @@ export class Item {
       prev: this.value,
       valid: false,
       params: this.params,
-      custom: this.rules.reduce((acc: any, rule) => {
-        acc[rule.name] = rule.validate();
+      custom: this.rules.reduce((acc: any, map) => {
+        acc[map.name] = map.rule.validate();
         return acc;
       }, {}),
     };

@@ -16,8 +16,8 @@ export class Valli {
 
   static Rule = Rule;
 
-  static addRule(ruleClass: RuleClass) {
-    RuleManager.add(ruleClass);
+  static addRule(name: string, ruleClass: RuleClass) {
+    RuleManager.add(name, ruleClass);
   }
 
   constructor({

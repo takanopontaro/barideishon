@@ -1,13 +1,7 @@
 export { Valli } from './main';
-export { Rule } from './rule';
+export * from './toolbelt';
 
-export {
-  RuleClass,
-  FormControl,
-  ValidityInfo,
-  ValidityResult,
-  ValliConf,
-} from './types';
+export { FormControl, ValidityInfo, ValidityResult, ValliConf } from './types';
 
 declare var window: any;
 

@@ -8,8 +8,6 @@ export interface Options {
 }
 
 export class Different extends Rule {
-  name = 'different';
-
   private partnerEl: FormControl;
 
   constructor(el: FormControl, options: Options) {

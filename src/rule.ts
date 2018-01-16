@@ -5,8 +5,6 @@ export interface Options {
 }
 
 export class Rule {
-  name: string;
-
   protected result: ValidityResult;
 
   constructor(protected el: FormControl, options: Options) {

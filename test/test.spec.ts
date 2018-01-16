@@ -2,7 +2,7 @@ declare var describe: any;
 declare var it: any;
 declare var chai: any;
 
-import { Valli, FormControl, ValidityInfo, ValliConf } from '../src/';
+import { Valli, FormControl, ValidityInfo, ValliConf, getValue } from '../src/';
 import * as $ from 'jquery';
 
 function getValliConf(formId: string, extra?: any): ValliConf {
@@ -15,6 +15,22 @@ function checkValidity(valli: Valli, dom: HTMLElement, expected: boolean) {
   const info = valli.validate(true).find(({ el }) => el === dom)!;
   chai.assert.equal(info.valid, expected);
 }
+
+class Match extends Valli.Rule {
+  private text: string;
+
+  constructor(el: FormControl, options: any) {
+    super(el, options);
+    this.text = options.text;
+  }
+
+  validate() {
+    this.result.valid = getValue(this.el) === this.text;
+    return this.result;
+  }
+}
+
+Valli.addRule('match', Match);
 
 describe('Native Rule', () => {
   const conf = getValliConf('#native-form');
@@ -38,13 +54,13 @@ describe('Native Rule', () => {
   });
 });
 
-describe('Custom Rule', () => {
-  const conf = getValliConf('#custom-form');
+describe('Builtin Rule', () => {
+  const conf = getValliConf('#builtin-form');
   const valli = new Valli(conf);
   describe('Equal', () => {
     it('should be valid when the two values are equal', () => {
-      const $el1 = $('#custom-equal-1');
-      const $el2 = $('#custom-equal-2');
+      const $el1 = $('#builtin-equal-1');
+      const $el2 = $('#builtin-equal-2');
       $el1.val('valli');
 
       $el2.val('foo');
@@ -58,8 +74,8 @@ describe('Custom Rule', () => {
   });
   describe('Different', () => {
     it('should be valid when the two values are not equal', () => {
-      const $el1 = $('#custom-different-1');
-      const $el2 = $('#custom-different-2');
+      const $el1 = $('#builtin-different-1');
+      const $el2 = $('#builtin-different-2');
       $el1.val('valli@example.com');
 
       $el2.val('valli@example.org');
@@ -71,8 +87,8 @@ describe('Custom Rule', () => {
   });
   describe('Within', () => {
     it('should be valid when the two values are corresponding range of dates', () => {
-      const $el1 = $('#custom-within-1');
-      const $el2 = $('#custom-within-2');
+      const $el1 = $('#builtin-within-1');
+      const $el2 = $('#builtin-within-2');
 
       $el1.val('2017/12/30');
       $el2.val('2017/12/31');
@@ -88,6 +104,22 @@ describe('Custom Rule', () => {
       $el2.val('foo');
       checkValidity(valli, $el1[0], false);
       checkValidity(valli, $el2[0], false);
+    });
+  });
+});
+
+describe('Custom Rule', () => {
+  const conf = getValliConf('#custom-form');
+  const valli = new Valli(conf);
+  describe('Match', () => {
+    it('should be valid when the value is `valli`', () => {
+      const $el = $('#custom-match');
+
+      $el.val('foo');
+      checkValidity(valli, $el[0], false);
+
+      $el.val('valli');
+      checkValidity(valli, $el[0], true);
     });
   });
 });

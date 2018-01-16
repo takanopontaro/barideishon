@@ -8,8 +8,6 @@ export interface Options {
 }
 
 export class Equal extends Rule {
-  name = 'equal';
-
   private partnerEl: FormControl;
 
   constructor(el: FormControl, options: Options) {

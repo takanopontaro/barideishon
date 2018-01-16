@@ -10,8 +10,6 @@ export interface Options {
 }
 
 export class Within extends Rule {
-  name = 'within';
-
   private startEl: FormControl;
   private endEl: FormControl;
   private incEqual: boolean;
